@@ -26,9 +26,7 @@ Ejemplos:
 
 \- victor/avance1
 
-\- maria/login
-
-\- jorge/navbar
+\- luis/avance2
 
 
 
