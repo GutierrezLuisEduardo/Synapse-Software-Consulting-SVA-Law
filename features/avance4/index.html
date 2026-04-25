@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>SVA Law | Sistema PLD/FT</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<input type="radio" name="vista" id="vista-clientes" checked>
+<input type="radio" name="vista" id="vista-expediente">
+<input type="radio" name="vista" id="vista-operaciones">
+<input type="radio" name="vista" id="vista-alertas">
+<input type="radio" name="vista" id="vista-reglas">
+<input type="radio" name="vista" id="vista-registro">
+<input type="radio" name="vista" id="vista-cargas">
+<input type="radio" name="vista" id="vista-canal">
+
+<header class="topbar">
+  <h1>SVA Law</h1>
+
+  <nav>
+    <label for="vista-clientes">Clientes</label>
+    <label for="vista-operaciones">Operaciones</label>
+    <label for="vista-alertas">Alertas</label>
+    <label for="vista-reglas">Creación de regla</label>
+    <label for="vista-registro">Guardar usuario/SOFOM</label>
+    <label for="vista-cargas">Cargar cliente/operaciones</label>
+    <label for="vista-canal">Canal privado</label>
+  </nav>
+</header>
+
+<main>
+
+  <!-- VISTA INICIAL: CLIENTES -->
+  <section class="vista clientes">
+    <div class="page-header">
+      <div>
+        <h2>Listado de clientes</h2>
+        <p>Selecciona un cliente para consultar su expediente.</p>
+      </div>
+
+      <input class="buscador" type="text" placeholder="Buscar cliente">
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>ID</th>
+            <th>Expediente</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td><label class="link-action" for="vista-expediente">Ver expediente</label></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td><label class="link-action" for="vista-expediente">Ver expediente</label></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td><label class="link-action" for="vista-expediente">Ver expediente</label></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td><label class="link-action" for="vista-expediente">Ver expediente</label></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- EXPEDIENTE DEL CLIENTE -->
+  <section class="vista expediente">
+
+    <div class="page-header">
+      <div>
+        <h2>Expediente del cliente</h2>
+        <p>Consulta la información general, operaciones y alertas asociadas al cliente.</p>
+      </div>
+    </div>
+
+    <input type="radio" name="tab-expediente" id="tab-info" checked>
+    <input type="radio" name="tab-expediente" id="tab-operaciones">
+    <input type="radio" name="tab-expediente" id="tab-alertas">
+
+    <div class="tabs">
+      <label for="tab-info">Información general</label>
+      <label for="tab-operaciones">Operaciones</label>
+      <label for="tab-alertas">Alertas</label>
+    </div>
+
+    <div class="tab-content info-general">
+      <div class="expediente-grid">
+        <div class="profile-card">
+          <div class="avatar"></div>
+          <p>Cliente</p>
+        </div>
+
+        <div class="card">
+          <h3>Datos del expediente</h3>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+
+      <h3>Contratos</h3>
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>ID contrato</th>
+              <th>Producto</th>
+              <th>Saldo</th>
+              <th>Vigencia</th>
+              <th>Estatus</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-content operaciones-cliente">
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>ID operación</th>
+              <th>Contrato</th>
+              <th>Tipo</th>
+              <th>Monto</th>
+              <th>Moneda</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-content alertas-cliente">
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>ID alerta</th>
+              <th>Tipo reporte</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Plazo</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPERACIONES GENERALES -->
+  <section class="vista operaciones">
+    <div class="page-header">
+      <h2>Operaciones</h2>
+      <details class="dropdown">
+        <summary>Filtros</summary>
+        <p>Fecha</p>
+        <p>Tipo</p>
+        <p>Moneda</p>
+      </details>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>ID operación</th>
+            <th>Cliente</th>
+            <th>Contrato</th>
+            <th>Monto</th>
+            <th>Moneda</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ALERTAS GENERALES -->
+  <section class="vista alertas">
+    <div class="page-header">
+      <h2>Alertas</h2>
+      <button>Exportar historial</button>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>ID alerta</th>
+            <th>Cliente</th>
+            <th>Tipo reporte</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Plazo resolución</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CREACIÓN DE REGLA -->
+  <section class="vista reglas">
+    <h2>Creación de regla</h2>
+
+    <div class="grid-two">
+      <div class="card">
+        <h3>Parametrización</h3>
+
+        <details class="dropdown">
+          <summary>Tipo de reporte</summary>
+          <p>ROR</p>
+          <p>ROI</p>
+          <p>ROIP</p>
+          <p>ROI-24</p>
+        </details>
+
+        <details class="dropdown">
+          <summary>Tipo de entidad</summary>
+          <p>Cliente</p>
+          <p>Operación</p>
+          <p>Contrato</p>
+        </details>
+
+        <input type="date">
+        <input type="number" placeholder="Periodicidad">
+
+        <div class="criteria-box">
+          <details class="dropdown">
+            <summary>Nombre del criterio</summary>
+          </details>
+
+          <details class="dropdown">
+            <summary>Valor</summary>
+          </details>
+
+          <details class="dropdown">
+            <summary>Operador</summary>
+          </details>
+        </div>
+
+        <button>Agregar criterio</button>
+      </div>
+
+      <div class="table-card">
+        <h3>Reglas existentes</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Regla</th>
+              <th>Criterio</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTRO USUARIO / SOFOM -->
+  <section class="vista registro">
+    <h2>Guardar usuario/SOFOM</h2>
+
+    <div class="grid-two">
+      <div class="card">
+        <h3>Usuario</h3>
+        <input type="text" placeholder="Nombre">
+        <input type="email" placeholder="Correo electrónico">
+        <input type="password" placeholder="Contraseña">
+
+        <details class="dropdown">
+          <summary>Rol de usuario</summary>
+          <p>Administrador</p>
+          <p>Oficial de Cumplimiento</p>
+          <p>Empleado de SOFOM</p>
+        </details>
+
+        <button>Guardar usuario</button>
+      </div>
+
+      <div class="card">
+        <h3>SOFOM</h3>
+        <input type="text" placeholder="Razón social">
+        <input type="text" placeholder="Canal privado">
+
+        <details class="dropdown">
+          <summary>Tipo de SOFOM</summary>
+          <p>Regulada</p>
+          <p>No regulada</p>
+        </details>
+
+        <button>Guardar SOFOM</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARGAS -->
+  <section class="vista cargas">
+    <h2>Cargar cliente/operaciones</h2>
+
+    <div class="grid-two">
+      <div class="upload-card">
+        <div class="upload-icon">+</div>
+        <h3>Cargar cliente</h3>
+        <p>Formato permitido: CSV</p>
+        <button>Cargar archivo</button>
+      </div>
+
+      <div class="upload-card">
+        <div class="upload-icon">↑</div>
+        <h3>Cargar operaciones</h3>
+        <p>Formato permitido: CSV</p>
+        <button>Cargar archivo</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CANAL PRIVADO -->
+  <section class="vista canal">
+    <h2>Canal privado</h2>
+    <p>Generación de reportes internos con posibilidad de adjuntar evidencia.</p>
+
+    <div class="grid-two">
+      <div class="card">
+        <details class="dropdown">
+          <summary>Tipo de reporte</summary>
+          <p>Reporte interno</p>
+        </details>
+
+        <textarea placeholder="Motivo"></textarea>
+
+        <button>Enviar reporte</button>
+      </div>
+
+      <div class="upload-card">
+        <div class="upload-icon">□</div>
+        <h3>Cargar evidencia</h3>
+        <p>Archivo permitido según configuración del sistema</p>
+        <button>Cargar archivo</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>
