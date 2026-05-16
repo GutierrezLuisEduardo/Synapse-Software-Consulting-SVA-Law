@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+    </head>
+    <body>
+        <%- include('../partials/navbar') %>
+        <div class="dashboard-container">
+            <h1 class="role-title"> <%= usuario.rol %> </h1>
+
+            <h2>Bienvenido <%= usuario.nombre %></h2>
+
+            <% if (esAdmin) { %>
+                <a href="/users/create">Crear usuario</a>
+            <% } %>
+        </div>
+        <%- include('../partials/footer') %>
+    </body>
+</html>

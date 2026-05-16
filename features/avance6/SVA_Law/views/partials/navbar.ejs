@@ -1,0 +1,16 @@
+<nav class="navbar">
+    <h2>SVA LAW</h2>
+
+    <% if (locals.usuario) { %>
+        <div>
+            <span>
+                <%= usuario.nombre %>
+            </span>
+            <form action="/logout" method="POST" style="display:inline;">
+                <button type="submit">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    <% } %>
+</nav>
