@@ -1,0 +1,36 @@
+<div class="sidebar">
+    <div>
+        <div class="sidebar-header">
+            <h2>
+                <% if (locals.usuario && usuario.rol === 'Administrador') { %>
+                    <a href="/sofomes" class="logo-link">SVA LAW</a>
+                <% } else { %>
+                    <a href="/clientes" class="logo-link">SVA LAW</a>
+                <% } %>
+            </h2>
+        </div>
+
+        <% if (locals.usuario) { %>
+            <div class="sidebar-user">
+                <p class="user-name"><%= usuario.nombre %></p>
+                <p class="user-role"><%= usuario.rol %></p>
+            </div>
+
+            <div class="sidebar-links">
+                <% if (usuario.rol === 'Administrador') { %>
+                    <a href="/sofomes" class="<%= locals.activePage === 'sofomes' ? 'active' : '' %>">SOFOMes</a>
+                    <a href="/users/create" class="<%= locals.activePage === 'admin' ? 'active' : '' %>">Usuarios y SOFOMes</a>
+                <% } else { %>
+                    <a href="/clientes" class="<%= locals.activePage === 'clientes' ? 'active' : '' %>">Clientes</a>
+                    <a href="/clientes/alta" class="<%= locals.activePage === 'alta' ? 'active' : '' %>">Alta de Cliente</a>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+
+    <% if (locals.usuario) { %>
+        <form action="/logout" method="POST">
+            <button type="submit" class="logout-btn">Cerrar sesión</button>
+        </form>
+    <% } %>
+</div>
