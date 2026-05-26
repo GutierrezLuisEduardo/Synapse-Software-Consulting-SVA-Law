@@ -9,22 +9,6 @@ const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const clienteRoutes = require('./routes/cliente.routes');
 const sofomRoutes = require('./routes/sofom.routes');
-const { warmCatalogos } = require('./controllers/cliente.controller');
-
-// Warm catalogue cache BEFORE opening the server to traffic
-warmCatalogos()
-    .then(() => {
-        app.listen(PORT, () => {
-            console.log(`Servidor corriendo en el puerto ${PORT}`);
-        });
-    })
-    .catch(err => {
-        console.error('Error precargando catálogos:', err.message);
-        // Start anyway — getCatalogos() will retry on first request
-        app.listen(PORT, () => {
-            console.log(`Servidor corriendo en el puerto ${PORT} (sin caché)`);
-        });
-    });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,5 +27,4 @@ app.use(sofomRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
-    warmCatalogos();
 });
