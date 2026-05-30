@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/clientes.css">
+        <link rel="stylesheet" href="/css/expediente.css">
+    </head>
+    <body>
+        <%- include('../partials/navbar') %>
+
+        <div class="main-content">
+            <div class="container py-5">
+
+                <h1 class="page-title mb-1">Alta de Operación</h1>
+                <p class="text-muted mb-4">Registro manual de una operación asociada a un contrato existente.</p>
+
+                <% if (!puedeEditar) { %>
+                    <div class="alert alert-warning mb-4">
+                        Solo el Oficial de Cumplimiento, Administrador o Empleado pueden registrar operaciones. Estás en modo lectura.
+                    </div>
+                <% } %>
+
+                <% if (locals.error) { %>
+                    <div class="alert alert-danger mb-4"><%= error %></div>
+                <% } %>
+                <% if (locals.exito) { %>
+                    <div class="alert alert-success mb-4"><%= exito %></div>
+                <% } %>
+
+                <form action="/operaciones/alta" method="POST">
+
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Cliente</h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">
+                                    ID del Cliente <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" id="inputClienteId" name="cliente_id" class="form-control" placeholder="Ej. 1042" min="1"
+                                        value="<%= valores ? valores.cliente_id : '' %>"
+                                        <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <button type="button" id="btnBuscarCliente" class="btn btn-outline-secondary"
+                                        <%= !puedeEditar ? 'disabled' : '' %> >Buscar</button>
+                                </div>
+                                <div id="clienteStatus" class="form-text mt-1"></div>
+                            </div>
+
+                            <div class="col-md-9">
+                                <label class="form-label fw-semibold">Nombre del Cliente</label>
+                                <input
+                                    type="text"
+                                    id="nombreClienteDisplay"
+                                    class="form-control"
+                                    placeholder="Se completará al buscar el ID"
+                                    disabled
+                                >
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Contrato</h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Contrato <span class="text-danger">*</span>
+                                </label>
+                                <select name="contrato_id" id="selectContrato" class="form-select"
+                                    <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    
+                                    <option value="">— Busca primero un cliente —</option>
+                                    <% if (contratos && contratos.length > 0) { %>
+                                        <% contratos.forEach(c => { %>
+                                            <option
+                                                value="<%= c.contrato_id %>"
+                                                data-monto="<%= c.monto_total_pago %>"
+                                                data-pagado="<%= c.monto_pagado %>"
+                                                data-inicio="<%= c.fecha_inicio ? c.fecha_inicio.toISOString().split('T')[0] : '' %>"
+                                                data-fin="<%= c.fecha_finalizacion ? c.fecha_finalizacion.toISOString().split('T')[0] : '' %>"
+                                                <%= valores && valores.contrato_id == c.contrato_id ? 'selected' : '' %> >
+                                                #<%= c.contrato_id %> – <%= c.descripcion || 'Sin descripción' %>
+                                            </option>
+                                        <% }) %>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6" id="resumenContrato" style="display:none">
+                                <label class="form-label fw-semibold">Resumen del Contrato</label>
+                                <div class="datos-grid" style="grid-template-columns: 1fr 1fr; gap: 8px 16px;">
+                                    <div class="dato-item">
+                                        <span class="dato-label">Monto total</span>
+                                        <span class="dato-valor" id="rcMontoTotal">—</span>
+                                    </div>
+                                    <div class="dato-item">
+                                        <span class="dato-label">Monto pagado</span>
+                                        <span class="dato-valor" id="rcMontoPagado">—</span>
+                                    </div>
+                                    <div class="dato-item">
+                                        <span class="dato-label">Fecha inicio</span>
+                                        <span class="dato-valor" id="rcInicio">—</span>
+                                    </div>
+                                    <div class="dato-item">
+                                        <span class="dato-label">Fecha fin</span>
+                                        <span class="dato-valor" id="rcFin">—</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Datos de la Operación</h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    Monto <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" name="monto" class="form-control" placeholder="0.00" step="0.01" min="0.01"
+                                        value="<%= valores ? valores.monto : '' %>"
+                                        <%= !puedeEditar ? 'disabled' : '' %> required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    Fecha y Hora de Emisión <span class="text-danger">*</span>
+                                </label>
+                                <input type="datetime-local" name="emision_operacion" class="form-control"
+                                    value="<%= valores ? valores.emision_operacion : '' %>"
+                                    <%= !puedeEditar ? 'disabled' : '' %> required>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Clasificación PLD/FT</h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Origen de los Recursos <span class="text-danger">*</span>
+                                </label>
+                                <select name="origen_recursos" class="form-select" <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.origenRecursos.forEach(op => { %>
+                                        <option value="<%= op.valores %>"
+                                            <%= valores && valores.origen_recursos == op.valores ? 'selected' : '' %>>
+                                            <%= op.opciones %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Origen de la Operación <span class="text-danger">*</span>
+                                </label>
+                                <select name="origen_operacion" class="form-select" <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.origenOperacion.forEach(op => { %>
+                                        <option value="<%= op.valores %>"
+                                            <%= valores && valores.origen_operacion == op.valores ? 'selected' : '' %>>
+                                            <%= op.opciones %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Destino de la Operación <span class="text-danger">*</span>
+                                </label>
+                                <select name="destino_operacion" class="form-select" <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.destinoOperacion.forEach(op => { %>
+                                        <option value="<%= op.valores %>"
+                                            <%= valores && valores.destino_operacion == op.valores ? 'selected' : '' %>>
+                                            <%= op.opciones %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Instrumento Monetario <span class="text-danger">*</span>
+                                </label>
+                                <select name="instrumento_monetario" class="form-select" <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.instrumentoMonetario.forEach(op => { %>
+                                        <option value="<%= op.valores %>"
+                                            <%= valores && valores.instrumento_monetario == op.valores ? 'selected' : '' %>>
+                                            <%= op.opciones %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Campos Inferidos por el Sistema</h2>
+                        <p class="text-muted small mb-0">
+                            Los siguientes campos son calculados automáticamente a partir de los datos del contrato
+                            y del historial de operaciones, por lo que no requieren captura manual:
+                            <strong>Frecuencia</strong>, <strong>Liquidación anticipada</strong>,
+                            <strong>Pagos en exceso</strong> e <strong>Incremento de monto vs. monto anterior</strong>.
+                        </p>
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-end mb-5">
+                        <a href="/operaciones" class="btn btn-outline-secondary px-4">Cancelar</a>
+                        <% if (puedeEditar) { %>
+                            <button type="submit" class="btn-expediente px-5">
+                                Registrar Operación
+                            </button>
+                        <% } %>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+
+        <script>
+            const puedeEditar = '<%= puedeEditar %>' === 'true';
+
+            const inputClienteId = document.getElementById('inputClienteId');
+            const btnBuscarCliente = document.getElementById('btnBuscarCliente');
+            const clienteStatus = document.getElementById('clienteStatus');
+            const nombreDisplay = document.getElementById('nombreClienteDisplay');
+            const selectContrato = document.getElementById('selectContrato');
+            const resumenContrato = document.getElementById('resumenContrato');
+            const rcMontoTotal = document.getElementById('rcMontoTotal');
+            const rcMontoPagado = document.getElementById('rcMontoPagado');
+            const rcInicio = document.getElementById('rcInicio');
+            const rcFin = document.getElementById('rcFin');
+
+            function formatMXN(val) {
+                if (val === undefined || val === null || val === '') return '—';
+                return new Intl.NumberFormat('es-MX', {
+                    style: 'currency',
+                    currency: 'MXN'
+                }).format(val);
+            }
+
+            function actualizarResumenContrato() {
+                const opt = selectContrato.options[selectContrato.selectedIndex];
+                if (!opt || !opt.value) {
+                    resumenContrato.style.display = 'none';
+                    return;
+                }
+                rcMontoTotal.textContent = formatMXN(opt.dataset.monto);
+                rcMontoPagado.textContent = formatMXN(opt.dataset.pagado);
+                rcInicio.textContent = opt.dataset.inicio || '—';
+                rcFin.textContent = opt.dataset.fin    || '—';
+                resumenContrato.style.display = 'block';
+            }
+
+            async function buscarCliente() {
+                const id = inputClienteId.value.trim();
+                if (!id) return;
+
+                clienteStatus.textContent = 'Verificando cliente...';
+                clienteStatus.className = 'form-text mt-1 text-muted';
+                nombreDisplay.value = '';
+                selectContrato.innerHTML = '<option value="">Cargando contratos...</option>';
+                resumenContrato.style.display = 'none';
+
+                try {
+                    const resp = await fetch(`/clientes/${id}/verificar`);
+                    const json = await resp.json();
+
+                    if (!json.existe) {
+                        clienteStatus.textContent = 'Cliente no encontrado en esta SOFOM.';
+                        clienteStatus.className = 'form-text mt-1 text-danger';
+                        selectContrato.innerHTML = '<option value="">— Cliente no encontrado —</option>';
+                        return;
+                    }
+
+                    nombreDisplay.value = json.nombre;
+
+                    const respContratos = await fetch(`/clientes/${id}/contratos`);
+                    const jsonContratos = await respContratos.json();
+
+                    if (!jsonContratos.ok || jsonContratos.contratos.length === 0) {
+                        clienteStatus.textContent = `✓ ${json.nombre} — sin contratos registrados.`;
+                        clienteStatus.className = 'form-text mt-1 text-warning';
+                        selectContrato.innerHTML = '<option value="">— Sin contratos —</option>';
+                        return;
+                    }
+
+                    selectContrato.innerHTML = '<option value="">Seleccionar contrato...</option>';
+                    jsonContratos.contratos.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.contrato_id;
+                        opt.textContent = `#${c.contrato_id} – ${c.descripcion || 'Sin descripción'}`;
+                        opt.dataset.monto  = c.monto_total_pago  || 0;
+                        opt.dataset.pagado = c.monto_pagado       || 0;
+                        opt.dataset.inicio = c.fecha_inicio
+                            ? c.fecha_inicio.split('T')[0] : '';
+                        opt.dataset.fin    = c.fecha_finalizacion
+                            ? c.fecha_finalizacion.split('T')[0] : '';
+                        selectContrato.appendChild(opt);
+                    });
+
+                    clienteStatus.textContent = `Cliente encontrado: ${json.nombre}`;
+                    clienteStatus.className   = 'form-text mt-1 text-success';
+
+                } catch (err) {
+                    clienteStatus.textContent = 'Error al verificar el cliente.';
+                    clienteStatus.className = 'form-text mt-1 text-danger';
+                    console.error(err);
+                }
+            }
+
+            if (puedeEditar) {
+                btnBuscarCliente.addEventListener('click', buscarCliente);
+
+                inputClienteId.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        buscarCliente();
+                    }
+                });
+
+                selectContrato.addEventListener('change', actualizarResumenContrato);
+            }
+
+            actualizarResumenContrato();
+        </script>
+    </body>
+</html>
