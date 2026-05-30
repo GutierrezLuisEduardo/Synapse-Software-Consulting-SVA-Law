@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/clientes.css">
+        <link rel="stylesheet" href="/css/expediente.css">
+    </head>
+    <body>
+        <%- include('../partials/navbar') %>
+
+        <div class="main-content">
+            <div class="container py-5">
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <a href="/operaciones" class="btn btn-expediente btn-sm">Regresar</a>
+                    <h1 class="page-title mb-0">
+                        Detalle de Operación #<%= operacion.operacion_id %>
+                    </h1>
+                </div>
+
+                <div class="row g-4 mb-4">
+
+                    <div class="col-lg-6">
+                        <div class="exp-card h-100">
+                            <h2 class="exp-section-title">Datos de la Operación</h2>
+                            <div class="datos-grid">
+                                <div class="dato-item">
+                                    <span class="dato-label">ID Operación</span>
+                                    <span class="dato-valor"><%= operacion.operacion_id %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">ID Contrato</span>
+                                    <span class="dato-valor"><%= operacion.contrato_id %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Monto</span>
+                                    <span class="dato-valor">
+                                        $<%= parseFloat(operacion.monto).toLocaleString('es-MX', {
+                                            minimumFractionDigits: 2
+                                        }) %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Fecha de Emisión</span>
+                                    <span class="dato-valor">
+                                        <%= new Date(operacion.emision_operacion)
+                                            .toLocaleString('es-MX') %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Instrumento Monetario</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.instrumento_monetario || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Origen de los Recursos</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.origen_recursos || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Origen de Operación</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.origen_operacion || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Destino de Operación</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.destino_operacion || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Incremento vs Anterior</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.incremento_monto_vs_anterior || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Pago Excedido</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.pago_excedido || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">SOFOM</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.sofom_nombre %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="exp-card h-100">
+                            <h2 class="exp-section-title">Cliente y Contrato</h2>
+                            <div class="datos-grid">
+                                <div class="dato-item">
+                                    <span class="dato-label">ID Cliente</span>
+                                    <span class="dato-valor">
+                                        <a href="/clientes/<%= operacion.cliente_id %>"
+                                           style="color: var(--red); font-weight: 600;">
+                                            <%= operacion.cliente_id %>
+                                        </a>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Nombre / Razón Social</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.nombre_cliente || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Teléfono</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.telefono || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Correo</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.correo_electronico || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Descripción del Contrato</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.contrato_descripcion || '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Monto Total del Contrato</span>
+                                    <span class="dato-valor">
+                                        $<%= parseFloat(operacion.monto_total_pago).toLocaleString('es-MX', {
+                                            minimumFractionDigits: 2
+                                        }) %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Monto Pagado</span>
+                                    <span class="dato-valor">
+                                        $<%= parseFloat(operacion.monto_pagado || 0).toLocaleString('es-MX', {
+                                            minimumFractionDigits: 2
+                                        }) %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Pagos (hechos / acordados)</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.numero_pagos_hechos %> /
+                                        <%= operacion.numero_pagos_acordados %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Inicio del Contrato</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.contrato_inicio
+                                            ? new Date(operacion.contrato_inicio)
+                                                .toLocaleDateString('es-MX')
+                                            : '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Fin del Contrato</span>
+                                    <span class="dato-valor">
+                                        <%= operacion.contrato_fin
+                                            ? new Date(operacion.contrato_fin)
+                                                .toLocaleDateString('es-MX')
+                                            : '—' %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+    </body>
+</html>

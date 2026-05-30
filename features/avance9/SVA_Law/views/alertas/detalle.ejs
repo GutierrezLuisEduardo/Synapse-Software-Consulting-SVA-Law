@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/clientes.css">
+        <link rel="stylesheet" href="/css/expediente.css">
+    </head>
+    <body>
+        <%- include('../partials/navbar') %>
+
+        <div class="main-content">
+            <div class="container py-5">
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <a href="/alertas" class="btn btn-expediente" style="width:auto; padding: 8px 18px;">
+                        ← Volver
+                    </a>
+                    <h1 class="page-title mb-0">Detalle de Alerta #<%= alerta.alerta_id %></h1>
+                </div>
+
+                <div class="row g-4">
+
+                    <div class="col-lg-6">
+                        <div class="expediente-card h-100">
+                            <h5 class="mb-4" style="font-weight:700; border-bottom: 2px solid var(--light); padding-bottom:12px;">
+                                Información de la alerta
+                            </h5>
+                            <div class="cliente-info">
+                                <p><strong>ID:</strong> <%= alerta.alerta_id %></p>
+                                <p><strong>Tipo de alerta:</strong> <%= alerta.tipo_alerta %></p>
+                                <p><strong>Tipo de reporte:</strong> <%= alerta.tipo_reporte %></p>
+                                <p><strong>ID Operación relacionada:</strong> <%= alerta.operacion_id || '—' %></p>
+                                <p><strong>ID Regla:</strong> <%= alerta.regla_id %></p>
+                                <p><strong>Requiere dictamen:</strong> <%= alerta.requiere_dictamen ? 'Sí' : 'No' %></p>
+                                <% if (alerta.requiere_dictamen) { %>
+                                    <p><strong>Plazo para dictamen:</strong> <%= alerta.dias_hasta_dictamen %> días</p>
+                                <% } %>
+                                <p><strong>Fecha de alerta:</strong>
+                                    <%= new Date(alerta.fecha_hora_alerta).toLocaleString('es-MX') %>
+                                </p>
+                                <p><strong>Estado:</strong>
+                                    <% if (alerta.estado_revision) { %>
+                                        <span class="badge-expediente" style="background-color: #2e7d32;">Revisada</span>
+                                    <% } else { %>
+                                        <span class="badge-expediente" style="background-color: var(--red);">Pendiente</span>
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="expediente-card h-100">
+                            <h5 class="mb-4" style="font-weight:700; border-bottom: 2px solid var(--light); padding-bottom:12px;">Reporte generado</h5>
+                            <% if (reporte) { %>
+                                <div class="cliente-info">
+                                    <p><strong>ID Reporte:</strong> <%= reporte.reporte_id %></p>
+                                    <p><strong>Tipo:</strong> <%= reporte.tipo_reporte %></p>
+                                    <p><strong>Fecha de generación:</strong>
+                                        <%= new Date(reporte.fecha_generacion).toLocaleString('es-MX') %>
+                                    </p>
+                                    <p><strong>Descargado:</strong> <%= reporte.ha_sido_descargado ? 'Sí' : 'No' %></p>
+                                    <% if (reporte.plazo_dictamen) { %>
+                                        <p><strong>Plazo de dictamen:</strong>
+                                            <%= new Date(reporte.plazo_dictamen).toLocaleDateString('es-MX') %>
+                                        </p>
+                                    <% } %>
+                                    <% if (reporte.dictamen) { %>
+                                        <p><strong>Dictamen:</strong> <%= reporte.dictamen %></p>
+                                    <% } else { %>
+                                        <p class="text-muted" style="font-size:0.9rem;">Sin dictamen emitido aún.</p>
+                                    <% } %>
+                                </div>
+                            <% } else { %>
+                                <p class="text-muted" style="font-size:0.9rem;">
+                                    Esta alerta no tiene un reporte asociado todavía.
+                                </p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+    </body>
+</html>
