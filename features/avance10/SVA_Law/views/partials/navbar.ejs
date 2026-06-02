@@ -1,0 +1,47 @@
+<div class="sidebar">
+    <div>
+        <div class="sidebar-header">
+            <h2>
+                <a href="/clientes" class="logo-link">SVA LAW</a>
+            </h2>
+        </div>
+
+        <% if (locals.usuario) { %>
+            <div class="sidebar-user">
+                <p class="user-name"><%= usuario.nombre %></p>
+                <p class="user-role"><%= usuario.rol %></p>
+            </div>
+
+            <div class="sidebar-links">
+                <% if (usuario.rol === 'Root') { %>
+                    <a href="/sofomes" class="<%= locals.activePage === 'sofomes' ? 'active' : '' %>">SOFOMes</a>
+                    <a href="/sofomes/create" class="<%= locals.activePage === 'create' ? 'active' : '' %>">Crear SOFOM</a>
+                    <a href="/root/users/create-admin" class="<%= locals.activePage === 'create-admin-root' ? 'active' : '' %>">Crear Administrador</a>
+                <% } %>
+
+                <% if (usuario.rol === 'Administrador') { %>
+                    <a href="/users/create" class="<%= locals.activePage === 'admin' ? 'active' : '' %>">Crear Usuarios</a>
+                <% } %>
+
+                <% if (usuario.rol !== 'Root') { %>
+                    <a href="/alertas" class="<%= locals.activePage === 'alertas' ? 'active' : '' %>">Alertas Globales</a>
+                    <a href="/operaciones" class="<%= locals.activePage === 'operaciones' ? 'active' : '' %>">Operaciones Globales</a>
+                    <a href="/clientes" class="<%= locals.activePage === 'clientes' ? 'active' : '' %>">Clientes</a>
+                    <a href="/clientes/alta" class="<%= locals.activePage === 'alta' ? 'active' : '' %>">Alta de Cliente</a>
+                    <% if (usuario.rol !== 'Auditor') { %>
+                        <a href="/contratos/alta" class="<%= locals.activePage === 'alta-contrato' ? 'active' : '' %>">Alta de Contrato</a>
+                        <a href="/operaciones/alta" class="<%= locals.activePage === 'alta-operacion' ? 'active' : '' %>">Alta de Operación</a>
+                        <a href="/listas-bloqueo" class="<%= locals.activePage === 'listas-bloqueo' ? 'active' : '' %>">Listas de Bloqueo</a>
+                    <% } %>
+                    <a href="/documentos/subir" class="<%= locals.activePage === 'documentos' ? 'active' : '' %>">Subir Documentos</a>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+
+    <% if (locals.usuario) { %>
+        <form action="/logout" method="POST">
+            <button type="submit" class="logout-btn">Cerrar sesión</button>
+        </form>
+    <% } %>
+</div>
