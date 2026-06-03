@@ -1,14 +1,13 @@
 {
   "name": "sva_law",
-  "version": "8.0.0",
+  "version": "1.0.0",
   "description": "",
   "license": "ISC",
-  "author": "Víctor Adrián García Galván y Luis Eduardo Gutiérrez Chavarría",
+  "author": "",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",

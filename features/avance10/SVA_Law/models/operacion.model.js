@@ -18,15 +18,15 @@ module.exports = class Operacion {
                 inc_cat.opciones AS incremento_monto_vs_anterior,
                 pag_cat.opciones AS pago_excedido
             FROM operaciones o
-            INNER JOIN contratos ct        ON o.contrato_id           = ct.contrato_id
+            INNER JOIN contratos ct ON o.contrato_id = ct.contrato_id
             INNER JOIN perfiles_cliente pc ON ct.perfiles_cliente_id  = pc.perfiles_cliente_id
-            INNER JOIN clientes c          ON pc.cliente_id           = c.cliente_id
-            LEFT JOIN tf_catalogos or_cat  ON or_cat.catalogo_id  = 13 AND or_cat.valores  = o.origen_recursos
-            LEFT JOIN tf_catalogos ori_cat ON ori_cat.catalogo_id = 6  AND ori_cat.valores = o.origen_operacion
-            LEFT JOIN tf_catalogos dst_cat ON dst_cat.catalogo_id = 7  AND dst_cat.valores = o.destino_operacion
-            LEFT JOIN tf_catalogos ins_cat ON ins_cat.catalogo_id = 27 AND ins_cat.valores = o.instrumento_monetario
-            LEFT JOIN tf_catalogos inc_cat ON inc_cat.catalogo_id = 31 AND inc_cat.valores = o.incremento_monto_vs_anterior
-            LEFT JOIN tf_catalogos pag_cat ON pag_cat.catalogo_id = 28 AND pag_cat.valores = o.pago_excedido
+            INNER JOIN clientes c ON pc.cliente_id = c.cliente_id
+            LEFT JOIN tf_catalogos or_cat ON or_cat.id_opcion = o.origen_recursos
+            LEFT JOIN tf_catalogos ori_cat ON ori_cat.id_opcion = o.origen_operacion
+            LEFT JOIN tf_catalogos dst_cat ON dst_cat.id_opcion = o.destino_operacion
+            LEFT JOIN tf_catalogos ins_cat ON ins_cat.id_opcion = o.instrumento_monetario
+            LEFT JOIN tf_catalogos inc_cat ON inc_cat.id_opcion = o.incremento_monto_vs_anterior
+            LEFT JOIN tf_catalogos pag_cat ON pag_cat.id_opcion = o.pago_excedido
             WHERE c.sofom_id = $3
             ORDER BY o.operacion_id ASC
             LIMIT $1 OFFSET $2
@@ -76,12 +76,12 @@ module.exports = class Operacion {
             INNER JOIN perfiles_cliente pc ON ct.perfiles_cliente_id  = pc.perfiles_cliente_id
             INNER JOIN clientes c          ON pc.cliente_id           = c.cliente_id
             INNER JOIN sofom s             ON c.sofom_id              = s.sofom_id
-            LEFT JOIN tf_catalogos or_cat  ON or_cat.catalogo_id  = 13 AND or_cat.valores  = o.origen_recursos
-            LEFT JOIN tf_catalogos ori_cat ON ori_cat.catalogo_id = 6  AND ori_cat.valores = o.origen_operacion
-            LEFT JOIN tf_catalogos dst_cat ON dst_cat.catalogo_id = 7  AND dst_cat.valores = o.destino_operacion
-            LEFT JOIN tf_catalogos ins_cat ON ins_cat.catalogo_id = 27 AND ins_cat.valores = o.instrumento_monetario
-            LEFT JOIN tf_catalogos inc_cat ON inc_cat.catalogo_id = 31 AND inc_cat.valores = o.incremento_monto_vs_anterior
-            LEFT JOIN tf_catalogos pag_cat ON pag_cat.catalogo_id = 28 AND pag_cat.valores = o.pago_excedido
+            LEFT JOIN tf_catalogos or_cat ON or_cat.id_opcion = o.origen_recursos
+            LEFT JOIN tf_catalogos ori_cat ON ori_cat.id_opcion = o.origen_operacion
+            LEFT JOIN tf_catalogos dst_cat ON dst_cat.id_opcion = o.destino_operacion
+            LEFT JOIN tf_catalogos ins_cat ON ins_cat.id_opcion = o.instrumento_monetario
+            LEFT JOIN tf_catalogos inc_cat ON inc_cat.id_opcion = o.incremento_monto_vs_anterior
+            LEFT JOIN tf_catalogos pag_cat ON pag_cat.id_opcion = o.pago_excedido
             WHERE o.operacion_id = $1 AND c.sofom_id = $2
         `;
         return db.query(query, [operacionId, sofomId]);
@@ -105,12 +105,12 @@ module.exports = class Operacion {
             INNER JOIN contratos ct        ON o.contrato_id           = ct.contrato_id
             INNER JOIN perfiles_cliente pc ON ct.perfiles_cliente_id  = pc.perfiles_cliente_id
             INNER JOIN clientes c          ON pc.cliente_id           = c.cliente_id
-            LEFT JOIN tf_catalogos or_cat  ON or_cat.catalogo_id  = 13 AND or_cat.valores  = o.origen_recursos
-            LEFT JOIN tf_catalogos ori_cat ON ori_cat.catalogo_id = 6  AND ori_cat.valores = o.origen_operacion
-            LEFT JOIN tf_catalogos dst_cat ON dst_cat.catalogo_id = 7  AND dst_cat.valores = o.destino_operacion
-            LEFT JOIN tf_catalogos ins_cat ON ins_cat.catalogo_id = 27 AND ins_cat.valores = o.instrumento_monetario
-            LEFT JOIN tf_catalogos inc_cat ON inc_cat.catalogo_id = 31 AND inc_cat.valores = o.incremento_monto_vs_anterior
-            LEFT JOIN tf_catalogos pag_cat ON pag_cat.catalogo_id = 28 AND pag_cat.valores = o.pago_excedido
+            LEFT JOIN tf_catalogos or_cat ON or_cat.id_opcion = o.origen_recursos
+            LEFT JOIN tf_catalogos ori_cat ON ori_cat.id_opcion = o.origen_operacion
+            LEFT JOIN tf_catalogos dst_cat ON dst_cat.id_opcion = o.destino_operacion
+            LEFT JOIN tf_catalogos ins_cat ON ins_cat.id_opcion = o.instrumento_monetario
+            LEFT JOIN tf_catalogos inc_cat ON inc_cat.id_opcion = o.incremento_monto_vs_anterior
+            LEFT JOIN tf_catalogos pag_cat ON pag_cat.id_opcion = o.pago_excedido
             WHERE pc.cliente_id = $1
               AND c.sofom_id    = $2
             ORDER BY o.emision_operacion DESC
@@ -177,6 +177,15 @@ module.exports = class Operacion {
             destino_operacion,
             instrumento_monetario,
         ]);
+    }
+
+    static async updateUltimaOperacion(contratoId, operacionId) {
+        const query = `
+            UPDATE contratos
+            SET id_ultima_operacion = $1
+            WHERE contrato_id = $2
+        `;
+        return db.query(query, [operacionId, contratoId]);
     }
     
 };

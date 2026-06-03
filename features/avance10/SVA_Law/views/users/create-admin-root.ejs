@@ -18,6 +18,10 @@
                     <div class="alert alert-danger"><%= error %></div>
                 <% } %>
 
+                <% if (locals.exito) { %>
+                    <div class="alert alert-success">Administrador creado correctamente.</div>
+                <% } %>
+
                 <div class="row justify-content-center">
                     <div class="col-lg-5 col-md-7 col-sm-10">
                         <div class="card border-0 rounded-4 shadow-sm">

@@ -34,31 +34,30 @@
                         <h2 class="exp-section-title">Cliente</h2>
                         <div class="row g-3">
 
-                            <div class="col-md-3">
+                            <div class="col-md-12">
                                 <label class="form-label fw-semibold">
-                                    ID del Cliente <span class="text-danger">*</span>
+                                    Buscar Cliente <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
-                                    <input type="number" id="inputClienteId" name="cliente_id" class="form-control" placeholder="Ej. 1042" min="1"
-                                        value="<%= valores ? valores.cliente_id : '' %>"
-                                        <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <input type="text" id="inputBusquedaCliente" class="form-control"
+                                        placeholder="Buscar por nombre, RFC o ID..."
+                                        <%= !puedeEditar ? 'disabled' : '' %>>
                                     <button type="button" id="btnBuscarCliente" class="btn btn-outline-secondary"
-                                        <%= !puedeEditar ? 'disabled' : '' %> >Buscar</button>
+                                        <%= !puedeEditar ? 'disabled' : '' %>>Buscar</button>
                                 </div>
+
+                                <input type="hidden" id="inputClienteId" name="cliente_id"
+                                    value="<%= valores ? valores.cliente_id : '' %>" required>
                                 <div id="clienteStatus" class="form-text mt-1"></div>
+
+                                <ul id="listaResultadosCliente" class="list-group mt-1" style="display:none; position:absolute; z-index:1000; width:100%; max-height:220px; overflow-y:auto;"></ul>
                             </div>
 
-                            <div class="col-md-9">
+                            <div class="col-md-12">
                                 <label class="form-label fw-semibold">Nombre del Cliente</label>
-                                <input
-                                    type="text"
-                                    id="nombreClienteDisplay"
-                                    class="form-control"
-                                    placeholder="Se completará al buscar el ID"
-                                    disabled
-                                >
+                                <input type="text" id="nombreClienteDisplay" class="form-control"
+                                    placeholder="Se completará al seleccionar el cliente" disabled>
                             </div>
-
                         </div>
                     </div>
 
@@ -238,109 +237,97 @@
         <script>
             const puedeEditar = '<%= puedeEditar %>' === 'true';
 
-            const inputClienteId = document.getElementById('inputClienteId');
+            const inputBusqueda = document.getElementById('inputBusquedaCliente');
             const btnBuscarCliente = document.getElementById('btnBuscarCliente');
+            const inputClienteId = document.getElementById('inputClienteId');
             const clienteStatus = document.getElementById('clienteStatus');
             const nombreDisplay = document.getElementById('nombreClienteDisplay');
-            const selectContrato = document.getElementById('selectContrato');
-            const resumenContrato = document.getElementById('resumenContrato');
-            const rcMontoTotal = document.getElementById('rcMontoTotal');
-            const rcMontoPagado = document.getElementById('rcMontoPagado');
-            const rcInicio = document.getElementById('rcInicio');
-            const rcFin = document.getElementById('rcFin');
+            const listaResultados = document.getElementById('listaResultadosCliente');
 
-            function formatMXN(val) {
-                if (val === undefined || val === null || val === '') return '—';
-                return new Intl.NumberFormat('es-MX', {
-                    style: 'currency',
-                    currency: 'MXN'
-                }).format(val);
-            }
-
-            function actualizarResumenContrato() {
-                const opt = selectContrato.options[selectContrato.selectedIndex];
-                if (!opt || !opt.value) {
-                    resumenContrato.style.display = 'none';
+            async function buscarClientes() {
+                const termino = inputBusqueda.value.trim();
+                if (termino.length < 1) {
+                    clienteStatus.textContent = 'Escribe al menos 1 caracter.';
+                    clienteStatus.className = 'form-text mt-1 text-muted';
                     return;
                 }
-                rcMontoTotal.textContent = formatMXN(opt.dataset.monto);
-                rcMontoPagado.textContent = formatMXN(opt.dataset.pagado);
-                rcInicio.textContent = opt.dataset.inicio || '—';
-                rcFin.textContent = opt.dataset.fin    || '—';
-                resumenContrato.style.display = 'block';
-            }
 
-            async function buscarCliente() {
-                const id = inputClienteId.value.trim();
-                if (!id) return;
-
-                clienteStatus.textContent = 'Verificando cliente...';
+                clienteStatus.textContent = 'Buscando...';
                 clienteStatus.className = 'form-text mt-1 text-muted';
-                nombreDisplay.value = '';
-                selectContrato.innerHTML = '<option value="">Cargando contratos...</option>';
-                resumenContrato.style.display = 'none';
+                listaResultados.innerHTML = '';
+                listaResultados.style.display = 'none';
 
                 try {
-                    const resp = await fetch(`/clientes/${id}/verificar`);
+                    const resp = await fetch(`/clientes/buscar?q=${encodeURIComponent(termino)}`);
                     const json = await resp.json();
 
-                    if (!json.existe) {
-                        clienteStatus.textContent = 'Cliente no encontrado en esta SOFOM.';
-                        clienteStatus.className = 'form-text mt-1 text-danger';
-                        selectContrato.innerHTML = '<option value="">— Cliente no encontrado —</option>';
-                        return;
-                    }
-
-                    nombreDisplay.value = json.nombre;
-
-                    const respContratos = await fetch(`/clientes/${id}/contratos`);
-                    const jsonContratos = await respContratos.json();
-
-                    if (!jsonContratos.ok || jsonContratos.contratos.length === 0) {
-                        clienteStatus.textContent = `✓ ${json.nombre} — sin contratos registrados.`;
+                    if (!json.ok || json.clientes.length === 0) {
+                        clienteStatus.textContent = 'No se encontraron clientes.';
                         clienteStatus.className = 'form-text mt-1 text-warning';
-                        selectContrato.innerHTML = '<option value="">— Sin contratos —</option>';
                         return;
                     }
 
-                    selectContrato.innerHTML = '<option value="">Seleccionar contrato...</option>';
-                    jsonContratos.contratos.forEach(c => {
-                        const opt = document.createElement('option');
-                        opt.value = c.contrato_id;
-                        opt.textContent = `#${c.contrato_id} – ${c.descripcion || 'Sin descripción'}`;
-                        opt.dataset.monto  = c.monto_total_pago  || 0;
-                        opt.dataset.pagado = c.monto_pagado       || 0;
-                        opt.dataset.inicio = c.fecha_inicio
-                            ? c.fecha_inicio.split('T')[0] : '';
-                        opt.dataset.fin    = c.fecha_finalizacion
-                            ? c.fecha_finalizacion.split('T')[0] : '';
-                        selectContrato.appendChild(opt);
+                    json.clientes.forEach(c => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item list-group-item-action';
+                        li.style.cursor = 'pointer';
+                        li.textContent = `${c.razon_social} — RFC: ${c.rfc || 'N/A'} — ID: ${c.cliente_id}`;
+                        li.addEventListener('click', () => seleccionarCliente(c));
+                        listaResultados.appendChild(li);
                     });
 
-                    clienteStatus.textContent = `Cliente encontrado: ${json.nombre}`;
-                    clienteStatus.className   = 'form-text mt-1 text-success';
-
+                    listaResultados.style.display = 'block';
+                    clienteStatus.textContent = '';
                 } catch (err) {
-                    clienteStatus.textContent = 'Error al verificar el cliente.';
+                    clienteStatus.textContent = 'Error al buscar clientes.';
                     clienteStatus.className = 'form-text mt-1 text-danger';
-                    console.error(err);
+                }
+            }
+
+            async function seleccionarCliente(c) {
+                inputClienteId.value = c.cliente_id;
+                nombreDisplay.value = c.razon_social;
+                inputBusqueda.value = `${c.razon_social} (${c.rfc || 'Sin RFC'})`;
+                listaResultados.style.display = 'none';
+                clienteStatus.textContent = `✓ Cliente seleccionado: ID ${c.cliente_id}`;
+                clienteStatus.className = 'form-text mt-1 text-success';
+
+                if (typeof selectContrato !== 'undefined') {
+                    selectContrato.innerHTML = '<option value="">Cargando contratos...</option>';
+                    resumenContrato.style.display = 'none';
+                    const respC = await fetch(`/clientes/${c.cliente_id}/contratos`);
+                    const jsonC = await respC.json();
+                    if (!jsonC.ok || jsonC.contratos.length === 0) {
+                        selectContrato.innerHTML = '<option value="">— Sin contratos —</option>';
+                        clienteStatus.textContent += ' — sin contratos registrados.';
+                        return;
+                    }
+                    selectContrato.innerHTML = '<option value="">Seleccionar contrato...</option>';
+                    jsonC.contratos.forEach(ct => {
+                        const opt = document.createElement('option');
+                        opt.value = ct.contrato_id;
+                        opt.textContent = `#${ct.contrato_id} – ${ct.descripcion || 'Sin descripción'}`;
+                        opt.dataset.monto  = ct.monto_total_pago || 0;
+                        opt.dataset.pagado = ct.monto_pagado || 0;
+                        opt.dataset.inicio = ct.fecha_inicio ? ct.fecha_inicio.split('T')[0]  : '';
+                        opt.dataset.fin = ct.fecha_finalizacion ? ct.fecha_finalizacion.split('T')[0] : '';
+                        selectContrato.appendChild(opt);
+                    });
                 }
             }
 
             if (puedeEditar) {
-                btnBuscarCliente.addEventListener('click', buscarCliente);
-
-                inputClienteId.addEventListener('keydown', e => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        buscarCliente();
-                    }
+                btnBuscarCliente.addEventListener('click', buscarClientes);
+                inputBusqueda.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); buscarClientes(); }
                 });
-
-                selectContrato.addEventListener('change', actualizarResumenContrato);
             }
 
-            actualizarResumenContrato();
+            document.addEventListener('click', e => {
+                if (!listaResultados.contains(e.target) && e.target !== inputBusqueda) {
+                    listaResultados.style.display = 'none';
+                }
+            });
         </script>
     </body>
 </html>

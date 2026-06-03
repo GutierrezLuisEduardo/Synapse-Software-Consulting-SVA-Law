@@ -31,9 +31,9 @@
                     <% if (usuario.rol !== 'Auditor') { %>
                         <a href="/contratos/alta" class="<%= locals.activePage === 'alta-contrato' ? 'active' : '' %>">Alta de Contrato</a>
                         <a href="/operaciones/alta" class="<%= locals.activePage === 'alta-operacion' ? 'active' : '' %>">Alta de Operación</a>
-                        <a href="/listas-bloqueo" class="<%= locals.activePage === 'listas-bloqueo' ? 'active' : '' %>">Listas de Bloqueo</a>
                     <% } %>
                     <a href="/documentos/subir" class="<%= locals.activePage === 'documentos' ? 'active' : '' %>">Subir Documentos</a>
+                    <a href="/listas-bloqueo" class="<%= locals.activePage === 'listas-bloqueo' ? 'active' : '' %>">Listas de Bloqueo</a>
                 <% } %>
             </div>
         <% } %>
