@@ -20,10 +20,17 @@ router.post('/clientes/alta', isAuth,
     clienteController.postAltaCliente
 );
 
+router.get('/clientes/buscar', isAuth,
+    roleAuth(ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO, ROLES.AUDITOR),
+    clienteController.buscarClientes
+);
+
 router.get('/clientes/:id/verificar', isAuth,
     roleAuth(ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO, ROLES.AUDITOR),
     clienteController.verificarCliente
 );
+
+router.get('/clientes/buscar', isAuth, clienteController.buscarClientes);
 
 router.get('/clientes/:id', isAuth,
     roleAuth(ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO, ROLES.AUDITOR),

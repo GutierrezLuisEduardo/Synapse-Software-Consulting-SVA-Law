@@ -14,9 +14,10 @@ const alertaRoutes = require('./routes/alerta.routes');
 const documentoRoutes = require('./routes/documento.routes');
 const noAuditor = require('./middleware/no-auditor');
 const contratoRoutes = require('./routes/contrato.routes');
+const listaRiesgoRoutes = require('./routes/listaRiesgo.routes');
 const { warmCatalogos } = require('./controllers/cliente.controller');
 const { warmCatalogosOperacion } = require('./controllers/operacion.controller');
-const listaRiesgoRoutes = require('./routes/listaRiesgo.routes');
+const { warmCatalogosContrato } = require('./controllers/contrato.controller');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -57,3 +58,4 @@ warmCatalogos()
     });
 
 warmCatalogosOperacion();
+warmCatalogosContrato();

@@ -184,21 +184,6 @@ exports.postAltaCliente = async (req, res) => {
             return renderConError('La CLABE debe tener exactamente 18 dígitos');
         }
 
-        /* hasta que tengamos los valores de perfilamiento del cliente
-        await Cliente.create({
-            sofom_id: sofomId,
-            razon_social, telefono, correo_electronico, clabe,
-            serie_efirma, geolocalizacion, id_tipo_persona: id_tipo_persona || 0,
-            curp, rfc, genero, fecha_nacimiento, pais_nacimiento,
-            entidad_federativa_nacimiento, nombre_apoderado_legal, fecha_constitucion,
-            pais_origen, nacionalidad, domicilio, actividad_economica,
-            vinculado_con_grupo, estado_civil, dependientes_economicos,
-            numero_hijos, nivel_estudios, tipo_vivienda, tipo_empleo,
-            ingresos_mensuales, valor_patrimonio, pertenece_partido_politico,
-            peps, edad,
-        });*/
-
-        //por el momento
         const nuevoCliente = await Cliente.create({
             sofom_id: sofomId,
             razon_social, telefono, correo_electronico, clabe,
@@ -212,9 +197,7 @@ exports.postAltaCliente = async (req, res) => {
             peps, edad,
         });
 
-        //por el momento
         const clienteId = nuevoCliente.rows[0].cliente_id;
-        //por el momento
         await Cliente.crearPerfil(clienteId, sofomId);
 
         res.redirect('/clientes/alta?exito=1');
@@ -239,5 +222,22 @@ exports.verificarCliente = async (req, res) => {
     } catch (err) {
         console.error('verificarCliente:', err);
         return res.status(500).json({ existe: false });
+    }
+};
+
+exports.buscarClientes = async (req, res) => {
+    try {
+        const termino = (req.query.q || '').trim();
+        const sofomId = req.session.usuario.sofom_id;
+
+        if (!termino || termino.length < 1) {
+            return res.json({ ok: true, clientes: [] });
+        }
+
+        const result = await Cliente.buscarPorTermino(termino, sofomId);
+        return res.json({ ok: true, clientes: result.rows });
+    } catch (err) {
+        console.error('buscarClientes:', err);
+        return res.status(500).json({ ok: false, clientes: [] });
     }
 };

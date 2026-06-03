@@ -19,9 +19,9 @@ async function getCatalogos() {
         Contrato.fetchCatalogo(21)
     ]);
     catalogosCache = {
-        canales:        canales.rows,
-        productos:      productos.rows,
-        finalidades:    finalidades.rows,
+        canales: canales.rows,
+        productos: productos.rows,
+        finalidades: finalidades.rows,
         frecuenciasPago: frecuenciasPago.rows
     };
     return catalogosCache;
@@ -35,17 +35,16 @@ exports.warmCatalogosContrato = async () => {
 exports.getAltaContrato = async (req, res) => {
     try {
         const catalogos = await getCatalogos();
-        const puedeEditar = [ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO]
-            .includes(req.session.usuario.rol);
+        const puedeEditar = [ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO].includes(req.session.usuario.rol);
 
         return res.render('contratos/alta', {
-            usuario:    req.session.usuario,
+            usuario: req.session.usuario,
             activePage: 'alta-contrato',
             catalogos,
             puedeEditar,
-            valores:    null,
-            error:      null,
-            exito:      null
+            exito: req.query.exito ? 'Contrato registrado correctamente.' : null,
+            valores: null,
+            error: null,
         });
     } catch (err) {
         console.error('getAltaContrato:', err);
@@ -63,8 +62,7 @@ exports.postAltaContrato = async (req, res) => {
 
         const sofomId    = req.session.usuario.sofom_id;
         const catalogos  = await getCatalogos();
-        const puedeEditar = [ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO]
-            .includes(req.session.usuario.rol);
+        const puedeEditar = [ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO].includes(req.session.usuario.rol);
 
         const renderError = (msg) => res.render('contratos/alta', {
             usuario: req.session.usuario,
@@ -72,8 +70,8 @@ exports.postAltaContrato = async (req, res) => {
             catalogos,
             puedeEditar,
             valores: req.body,
-            error:   msg,
-            exito:   null
+            error: msg,
+            exito: null
         });
 
         if (!cliente_id || !canal || !producto || !finalidad_credito ||
@@ -105,15 +103,8 @@ exports.postAltaContrato = async (req, res) => {
             fecha_inicio, fecha_finalizacion, monto
         );
 
-        return res.render('contratos/alta', {
-            usuario:    req.session.usuario,
-            activePage: 'alta-contrato',
-            catalogos,
-            puedeEditar,
-            valores:    null,
-            error:      null,
-            exito:      'Contrato registrado correctamente.'
-        });
+        return res.redirect('/contratos/alta?exito=1');
+
     } catch (err) {
         console.error('postAltaContrato:', err);
         return res.status(500).send('Error interno del servidor.');

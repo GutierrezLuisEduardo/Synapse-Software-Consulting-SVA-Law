@@ -19,9 +19,9 @@ module.exports = class Contrato {
                 fp_cat.valores AS frecuencia_pago
             FROM contratos c
             INNER JOIN perfiles_cliente pc ON c.perfiles_cliente_id = pc.perfiles_cliente_id
-            LEFT JOIN tf_catalogos can_cat ON can_cat.catalogo_id = c.canal
-            LEFT JOIN tf_catalogos prod_cat ON prod_cat.catalogo_id = c.producto
-            LEFT JOIN tf_catalogos fp_cat ON fp_cat.catalogo_id = c.frecuencia_pago
+            LEFT JOIN tf_catalogos can_cat ON can_cat.id_opcion = c.canal
+            LEFT JOIN tf_catalogos prod_cat ON prod_cat.id_opcion = c.producto
+            LEFT JOIN tf_catalogos fp_cat ON fp_cat.id_opcion = c.frecuencia_pago
             WHERE pc.cliente_id = $1
             ORDER BY c.contrato_id ASC
         `;
@@ -39,7 +39,7 @@ module.exports = class Contrato {
                 liquidacion_anticipada_ultimo_pago,
                 fecha_inicio, fecha_finalizacion, monto_total_pago
             ) VALUES (
-                $1, $2, 0, $3,
+                $1, $2, NULL, $3,
                 $4, $5, $6, $7, 0,
                 0, 0, 0,
                 $8, $9, $10

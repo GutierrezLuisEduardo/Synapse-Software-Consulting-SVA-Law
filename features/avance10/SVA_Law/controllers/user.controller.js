@@ -70,7 +70,8 @@ exports.getCreateAdminRoot = async (req, res) => {
             roles: rolesResult.rows,
             sofoms: sofomsResult.rows,
             error: null,
-            valores: null
+            valores: null,
+            exito: req.query.exito ? true : false
         });
     } catch (error) {
         console.error(error);
@@ -112,7 +113,7 @@ exports.postCreateAdminRoot = async (req, res) => {
         const hash = await bcrypt.hash(contrasena, 10);
         await Usuario.create(nombre, correo_electronico, hash, rol_id, sofom_id);
 
-        res.redirect('/root/users/create-admin');
+        res.redirect('/root/users/create-admin?exito=1');
     } catch (error) {
         console.error(error);
         res.status(500).send('Error interno del servidor');

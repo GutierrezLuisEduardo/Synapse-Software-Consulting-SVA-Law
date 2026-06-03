@@ -1,13 +1,6 @@
 const ListaRiesgo = require('../models/listaRiesgo.model');
 const ROLES = require('../config/roles');
 
-/**
-  Normaliza el texto de la lista:
-    - Minúsculas
-    - Sin acentos/diacríticos
-    - Sólo letras y espacios (todo lo demás se sustituye por espacio)
-    - Sin espacios múltiples consecutivos
- */
 function normalizarTexto(texto) {
     return texto
         .normalize('NFD')
@@ -18,10 +11,9 @@ function normalizarTexto(texto) {
         .trim();
 }
 
-// GET /listas-bloqueo
 exports.getListasBloqueo = async (req, res) => {
     try {
-        const sofomId  = req.session.usuario.sofom_id;
+        const sofomId = req.session.usuario.sofom_id;
         const puedeSubir = [ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO].includes(req.session.usuario.rol);
 
         const [tiposResult, listasResult] = await Promise.all([
@@ -30,10 +22,10 @@ exports.getListasBloqueo = async (req, res) => {
         ]);
 
         return res.render('listas-bloqueo/subir', {
-            usuario:    req.session.usuario,
+            usuario: req.session.usuario,
             activePage: 'listas-bloqueo',
             tiposOrigen: tiposResult.rows,
-            listas:      listasResult.rows,
+            listas: listasResult.rows,
             puedeSubir,
             error: null,
             exito: null
@@ -44,9 +36,8 @@ exports.getListasBloqueo = async (req, res) => {
     }
 };
 
-// POST /listas-bloqueo  (multipart, campo "archivo" de tipo text/plain)
 exports.postListasBloqueo = async (req, res) => {
-    const sofomId    = req.session.usuario.sofom_id;
+    const sofomId = req.session.usuario.sofom_id;
     const puedeSubir = [ROLES.ADMIN, ROLES.OFICIAL].includes(req.session.usuario.rol);
 
     const renderConError = async (mensaje) => {
@@ -55,13 +46,13 @@ exports.postListasBloqueo = async (req, res) => {
             ListaRiesgo.fetchBySofom(sofomId)
         ]);
         return res.status(400).render('listas-bloqueo/subir', {
-            usuario:    req.session.usuario,
+            usuario: req.session.usuario,
             activePage: 'listas-bloqueo',
             tiposOrigen: tiposResult.rows,
-            listas:      listasResult.rows,
+            listas: listasResult.rows,
             puedeSubir,
-            error:  mensaje,
-            exito:  null
+            error: mensaje,
+            exito: null
         });
     };
 
@@ -82,15 +73,12 @@ exports.postListasBloqueo = async (req, res) => {
             return renderConError('Tipo de lista inválido.');
         }
 
-        // Leer el buffer como texto UTF-8
         const textoRaw = archivo.buffer.toString('utf-8');
-
         if (!textoRaw.trim()) {
             return renderConError('El archivo .txt está vacío.');
         }
 
         const textNormalizado = normalizarTexto(textoRaw);
-
         const resultado = await ListaRiesgo.upsert(sofomId, tipoId, textNormalizado);
 
         const [tiposResult, listasResult] = await Promise.all([
@@ -99,10 +87,10 @@ exports.postListasBloqueo = async (req, res) => {
         ]);
 
         return res.render('listas-bloqueo/subir', {
-            usuario:    req.session.usuario,
-            activePage: 'listas-bloqueo',
+            usuario: req.session.usuario,
+            activePage:  'listas-bloqueo',
             tiposOrigen: tiposResult.rows,
-            listas:      listasResult.rows,
+            listas: listasResult.rows,
             puedeSubir,
             error: null,
             exito: `Lista ${resultado.accion} correctamente (${textNormalizado.length.toLocaleString()} caracteres almacenados).`

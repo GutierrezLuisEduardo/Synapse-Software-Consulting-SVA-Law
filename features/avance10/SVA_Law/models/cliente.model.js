@@ -194,4 +194,24 @@ module.exports = class Cliente {
             [clienteId, sofomId]
         );
     }
+
+    static async buscarPorTermino(termino, sofomId) {
+        const query = `
+            SELECT
+                c.cliente_id,
+                c.razon_social,
+                c.rfc
+            FROM clientes c
+            WHERE
+                c.sofom_id = $2
+                AND (
+                    CAST(c.cliente_id AS TEXT) ILIKE $1
+                    OR c.razon_social ILIKE $1
+                    OR c.rfc ILIKE $1
+                )
+            ORDER BY c.razon_social ASC
+            LIMIT 10
+        `;
+        return db.query(query, [`%${termino}%`, sofomId]);
+    }
 };

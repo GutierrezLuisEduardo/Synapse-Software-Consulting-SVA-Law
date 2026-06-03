@@ -38,31 +38,14 @@ exports.getDetalleSofom = async (req, res) => {
         const sofomId = req.params.id;
         const rol = req.session.usuario.rol;
 
-        let sofom;
-        let usuarios;
+        const result = await Sofom.fetchByIdWithUsuarios(sofomId);
 
-        if (rol === 'Root') {
-
-            const sofomResult = await Sofom.fetchById(sofomId);
-
-            if (sofomResult.rows.length === 0) {
-                return res.status(404).send('SOFOM no encontrada');
-            }
-
-            sofom = sofomResult.rows[0];
-            usuarios = [];
-
-        } else {
-
-            const result = await Sofom.fetchByIdWithUsuarios(sofomId);
-
-            if (result.sofom.rows.length === 0) {
-                return res.status(404).send('SOFOM no encontrada');
-            }
-
-            sofom = result.sofom.rows[0];
-            usuarios = result.usuarios.rows;
+        if (result.sofom.rows.length === 0) {
+            return res.status(404).send('SOFOM no encontrada');
         }
+
+        const sofom  = result.sofom.rows[0];
+        const usuarios = result.usuarios.rows;
 
         res.render('sofomes/detalle', {
             usuario: req.session.usuario,

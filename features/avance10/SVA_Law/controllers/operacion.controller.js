@@ -101,19 +101,18 @@ exports.getAltaOperacion = async (req, res) => {
 
 exports.postAltaOperacion = async (req, res) => {
     const sofomId = req.session.usuario.sofom_id;
-    const puedeEditar = [ROLES.EMPLEADO, ROLES.OFICIAL, ROLES.ADMIN]
-        .includes(req.session.usuario.rol);
+    const puedeEditar = [ROLES.EMPLEADO, ROLES.OFICIAL, ROLES.ADMIN].includes(req.session.usuario.rol);
 
     const renderConError = async (msg, contratos = []) => {
         const catalogos = await getCatalogosOperacion();
         return res.render('operaciones/alta', {
-            usuario:    req.session.usuario,
+            usuario: req.session.usuario,
             activePage: 'alta-operacion',
             puedeEditar,
             catalogos,
-            error:     msg,
-            exito:     null,
-            valores:   req.body,
+            error: msg,
+            exito: null,
+            valores: req.body,
             contratos,
         });
     };
@@ -139,18 +138,21 @@ exports.postAltaOperacion = async (req, res) => {
             return renderConError('El monto debe ser un número positivo');
         }
 
-        const contratosDB    = await Operacion.fetchContratosDeCliente(cliente_id, sofomId);
+        const contratosDB = await Operacion.fetchContratosDeCliente(cliente_id, sofomId);
         const contratoValido = contratosDB.rows.some(c => String(c.contrato_id) === String(contrato_id));
 
         if (!contratoValido) {
             return renderConError('El contrato seleccionado no es válido para este cliente',contratosDB.rows);
         }
 
-        await Operacion.create({
+        const resultado = await Operacion.create({
             contrato_id, monto: montoNum, emision_operacion,
             origen_recursos, origen_operacion, destino_operacion,
             instrumento_monetario,
         });
+
+        const nuevaOperacionId = resultado.rows[0].operacion_id;
+        await Operacion.updateUltimaOperacion(contrato_id, nuevaOperacionId);
 
         res.redirect('/operaciones/alta?exito=1');
 

@@ -34,22 +34,29 @@
                         <h2 class="exp-section-title">Cliente</h2>
                         <div class="row g-3">
 
-                            <div class="col-md-3">
+                            <div class="col-md-12">
                                 <label class="form-label fw-semibold">
-                                    ID del Cliente <span class="text-danger">*</span>
+                                    Buscar Cliente <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
-                                    <input type="number" id="inputClienteId" name="cliente_id" class="form-control" placeholder="Ej. 1042" min="1"
-                                        value="<%= valores ? valores.cliente_id : '' %>"
-                                        <%= !puedeEditar ? 'disabled' : '' %> required>
-                                    <button type="button" id="btnBuscarCliente" class="btn btn-outline-secondary" <%= !puedeEditar ? 'disabled' : '' %> >Buscar</button>
+                                    <input type="text" id="inputBusquedaCliente" class="form-control"
+                                        placeholder="Buscar por nombre, RFC o ID..."
+                                        <%= !puedeEditar ? 'disabled' : '' %>>
+                                    <button type="button" id="btnBuscarCliente" class="btn btn-outline-secondary"
+                                        <%= !puedeEditar ? 'disabled' : '' %>>Buscar</button>
                                 </div>
+
+                                <input type="hidden" id="inputClienteId" name="cliente_id"
+                                    value="<%= valores ? valores.cliente_id : '' %>" required>
                                 <div id="clienteStatus" class="form-text mt-1"></div>
+
+                                <ul id="listaResultadosCliente" class="list-group mt-1" style="display:none; position:absolute; z-index:1000; width:100%; max-height:220px; overflow-y:auto;"></ul>
                             </div>
 
-                            <div class="col-md-9">
+                            <div class="col-md-12">
                                 <label class="form-label fw-semibold">Nombre del Cliente</label>
-                                <input type="text" id="nombreClienteDisplay" class="form-control" placeholder="Se completará al buscar el ID" disabled>
+                                <input type="text" id="nombreClienteDisplay" class="form-control"
+                                    placeholder="Se completará al seleccionar el cliente" disabled>
                             </div>
 
                         </div>
@@ -177,39 +184,76 @@
         <%- include('../partials/footer') %>
 
         <script>
-            const btnBuscar = document.getElementById('btnBuscarCliente');
-            const inputCliente = document.getElementById('inputClienteId');
+            const puedeEditar = '<%= puedeEditar %>' === 'true';
+
+            const inputBusqueda = document.getElementById('inputBusquedaCliente');
+            const btnBuscarCliente = document.getElementById('btnBuscarCliente');
+            const inputClienteId = document.getElementById('inputClienteId');
             const clienteStatus = document.getElementById('clienteStatus');
             const nombreDisplay = document.getElementById('nombreClienteDisplay');
+            const listaResultados = document.getElementById('listaResultadosCliente');
 
-            if (btnBuscar) {
-                btnBuscar.addEventListener('click', async () => {
-                    const val = inputCliente.value.trim();
-                    if (!val || isNaN(parseInt(val))) {
-                        clienteStatus.textContent = 'Ingresa un ID de cliente válido.';
-                        clienteStatus.className = 'form-text mt-1 text-danger';
+            async function buscarClientes() {
+                const termino = inputBusqueda.value.trim();
+                if (termino.length < 1) {
+                    clienteStatus.textContent = 'Escribe al menos 1 caracter.';
+                    clienteStatus.className = 'form-text mt-1 text-muted';
+                    return;
+                }
+
+                clienteStatus.textContent = 'Buscando...';
+                clienteStatus.className = 'form-text mt-1 text-muted';
+                listaResultados.innerHTML = '';
+                listaResultados.style.display = 'none';
+
+                try {
+                    const resp = await fetch(`/clientes/buscar?q=${encodeURIComponent(termino)}`);
+                    const json = await resp.json();
+
+                    if (!json.ok || json.clientes.length === 0) {
+                        clienteStatus.textContent = 'No se encontraron clientes.';
+                        clienteStatus.className = 'form-text mt-1 text-warning';
                         return;
                     }
-                    clienteStatus.textContent = 'Verificando cliente...';
-                    clienteStatus.className = 'form-text mt-1 text-muted';
-                    nombreDisplay.value = '';
-                    try {
-                        const resp = await fetch(`/clientes/${parseInt(val)}/verificar`);
-                        const json = await resp.json();
-                        if (json.existe) {
-                            clienteStatus.textContent = 'Cliente encontrado';
-                            clienteStatus.className = 'form-text mt-1 text-success';
-                            nombreDisplay.value = json.nombre;
-                        } else {
-                            clienteStatus.textContent = 'Cliente no encontrado en esta SOFOM.';
-                            clienteStatus.className = 'form-text mt-1 text-danger';
-                        }
-                    } catch {
-                        clienteStatus.textContent = 'Error al verificar cliente.';
-                        clienteStatus.className = 'form-text mt-1 text-danger';
-                    }
+
+                    json.clientes.forEach(c => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item list-group-item-action';
+                        li.style.cursor = 'pointer';
+                        li.textContent = `${c.razon_social} — RFC: ${c.rfc || 'N/A'} — ID: ${c.cliente_id}`;
+                        li.addEventListener('click', () => seleccionarCliente(c));
+                        listaResultados.appendChild(li);
+                    });
+
+                    listaResultados.style.display = 'block';
+                    clienteStatus.textContent = '';
+                } catch (err) {
+                    clienteStatus.textContent = 'Error al buscar clientes.';
+                    clienteStatus.className = 'form-text mt-1 text-danger';
+                }
+            }
+
+            async function seleccionarCliente(c) {
+                inputClienteId.value = c.cliente_id;
+                nombreDisplay.value = c.razon_social;
+                inputBusqueda.value = `${c.razon_social} (${c.rfc || 'Sin RFC'})`;
+                listaResultados.style.display = 'none';
+                clienteStatus.textContent = `✓ Cliente seleccionado: ID ${c.cliente_id}`;
+                clienteStatus.className = 'form-text mt-1 text-success';
+            }
+
+            if (puedeEditar) {
+                btnBuscarCliente.addEventListener('click', buscarClientes);
+                inputBusqueda.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); buscarClientes(); }
                 });
             }
+
+            document.addEventListener('click', e => {
+                if (!listaResultados.contains(e.target) && e.target !== inputBusqueda) {
+                    listaResultados.style.display = 'none';
+                }
+            });
         </script>
     </body>
 </html>
