@@ -1,5 +1,8 @@
-package.json
-package-lock.json
 node_modules
 .env
-.env2
+only_install_dependencies.sh
+install_and_init.sh
+listar_archivos.sh
+desplegar_dirstree.sh
+salida.txt
+package-lock.json
