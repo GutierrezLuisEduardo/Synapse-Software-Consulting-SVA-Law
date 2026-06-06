@@ -12,9 +12,11 @@ const sofomRoutes = require('./routes/sofom.routes');
 const operacionRoutes = require('./routes/operacion.routes');
 const alertaRoutes = require('./routes/alerta.routes');
 const documentoRoutes = require('./routes/documento.routes');
-const noAuditor = require('./middleware/no-auditor');
 const contratoRoutes = require('./routes/contrato.routes');
 const listaRiesgoRoutes = require('./routes/listaRiesgo.routes');
+const reporteRoutes = require('./routes/reporte.routes');
+const ebrRoutes = require('./routes/ebr.routes');
+const noAuditor = require('./middleware/no-auditor');
 const { warmCatalogos } = require('./controllers/cliente.controller');
 const { warmCatalogosOperacion } = require('./controllers/operacion.controller');
 const { warmCatalogosContrato } = require('./controllers/contrato.controller');
@@ -39,6 +41,8 @@ app.use(alertaRoutes);
 app.use(documentoRoutes);
 app.use(contratoRoutes);
 app.use(listaRiesgoRoutes);
+app.use(reporteRoutes);
+app.use(ebrRoutes);
 
 app.get('/', (req, res) => {
     res.redirect('/login');
