@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+        <link rel="stylesheet" href="/css/login.css">
+    </head>
+    <body>
+        <div class="login-wrapper">
+            <div class="login-brand">
+                <div class="brand-content">
+                    <h1 class="brand-logo">SVA LAW</h1>
+                    <p class="brand-tagline">Sistema Automático</p>
+                </div>
+                <p class="brand-footer">© <%= new Date().getFullYear() %> SVA Law. Todos los derechos reservados.</p>
+            </div>
+
+            <div class="login-panel">
+                <div class="login-box">
+
+                    <div class="login-header">
+                        <h2>Bienvenido</h2>
+                        <p>Ingresa tus credenciales para continuar</p>
+                    </div>
+
+                    <% if (error) { %>
+                        <div class="login-error">
+                            <%= error %>
+                        </div>
+                    <% } %>
+
+                    <form action="/login" method="POST" class="login-form">
+
+                        <div class="input-group">
+                            <label for="correo">Correo electrónico</label>
+                            <input type="email" id="correo" name="correo_electronico" placeholder="correo@ejemplo.com" required autocomplete="email">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="contrasena">Contraseña</label>
+                            <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required minlength="8" autocomplete="current-password">
+                        </div>
+
+                        <button type="submit" class="login-btn">Ingresar</button>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+</html>
