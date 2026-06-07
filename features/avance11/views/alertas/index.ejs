@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/clientes.css">
+    </head>
+    <body>
+        <%- include('../partials/navbar') %>
+
+        <div class="main-content">
+            <div class="container py-5">
+
+                <div class="clientes-header mb-4">
+                    <h1 class="page-title">Alertas</h1>
+                </div>
+
+                <% if (error) { %>
+                    <div class="alert alert-danger"><%= error %></div>
+                <% } %>
+
+                <%# Barra de filtros %>
+                <form method="GET" action="/alertas" class="d-flex flex-wrap gap-2 align-items-end mb-3">
+                    <div>
+                        <label class="form-label mb-1 fw-semibold" style="font-size:.8rem;">Tipo de alerta</label>
+                        <select name="tipo_alerta_id" class="form-select form-select-sm">
+                            <option value="">Todas</option>
+                            <% tiposAlerta.forEach(t => { %>
+                                <option value="<%= t.tipo_alerta_id %>"
+                                    <%= filtros.tipo_alerta_id == t.tipo_alerta_id ? 'selected' : '' %>>
+                                    <%= t.descripcion %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label mb-1 fw-semibold" style="font-size:.8rem;">Tipo de reporte</label>
+                        <select name="tipo_reporte_id" class="form-select form-select-sm">
+                            <option value="">Todos</option>
+                            <% tiposReporte.forEach(t => { %>
+                                <% if (t.tipo_reporte_id === 3 && !esOficial) return; %>
+                                <option value="<%= t.tipo_reporte_id %>"
+                                    <%= filtros.tipo_reporte_id == t.tipo_reporte_id ? 'selected' : '' %>>
+                                    <%= t.descripcion %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-expediente btn-sm">Filtrar</button>
+                    <a href="/alertas" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+                </form>
+
+                <%# Botones de exportación %>
+                <div class="d-flex gap-2 mb-3">
+                    <a href="/alertas/descargar-reportes" class="btn btn-expediente btn-sm">
+                        Descargar reportes pendientes
+                    </a>
+                    <a href="/alertas/exportar/txt" class="btn btn-outline-secondary btn-sm">
+                        Exportar historial de alertas
+                    </a>
+                </div>
+
+
+
+                <div class="table-responsive tabla-container">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipo de alerta</th>
+                                <th>Tipo de reporte</th>
+                                <th>ID Operación</th>
+                                <th>Descripción</th>
+                                <th>Requiere dictamen</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (alertas.length === 0) { %>
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        No hay alertas registradas
+                                    </td>
+                                </tr>
+                            <% } %>
+                            <% alertas.forEach(alerta => { %>
+                                <tr class="fila-cliente"
+                                    onclick="window.location='/alertas/<%= alerta.alerta_id %>'">
+                                    <td><%= alerta.alerta_id %></td>
+                                    <td><%= alerta.tipo_alerta %></td>
+                                    <td><%= alerta.tipo_reporte %></td>
+                                    <td><%= alerta.operacion_id || '—' %></td>
+                                    <td style="max-width:220px; font-size:.85rem; color:#555;">
+                                        <%= alerta.descripcion ? alerta.descripcion.slice(0,80) + (alerta.descripcion.length > 80 ? '…' : '') : '—' %>
+                                    </td>
+                                    <td><%= alerta.requiere_dictamen ? 'Sí' : 'No' %></td>
+                                    <td>
+                                        <% if (alerta.estado_revision) { %>
+                                            <span class="badge-expediente" style="background-color: #2e7d32;">Revisada</span>
+                                        <% } else { %>
+                                            <span class="badge-expediente" style="background-color: var(--red);">Pendiente</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(alerta.fecha_hora_alerta).toLocaleDateString('es-MX') %>
+                                    </td>
+                                    <td>
+                                        <span class="badge-expediente">Ver detalle</span>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+    </body>
+</html>

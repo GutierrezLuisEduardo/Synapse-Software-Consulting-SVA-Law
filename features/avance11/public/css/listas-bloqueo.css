@@ -1,0 +1,37 @@
+.listas-section-title {
+    font-weight: 600;
+    color: var(--black);
+}
+
+.listas-id-cell {
+    color: rgba(26, 26, 22, 0.45);
+    font-size: 0.85rem;
+}
+
+.listas-badge {
+    background-color: var(--black);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 99px;
+}
+
+.table thead {
+    background-color: var(--black);
+    color: var(--white);
+}
+
+.table thead th {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    padding: 14px 16px;
+}
+
+.table tbody td {
+    font-size: 0.9rem;
+    padding: 12px 16px;
+    vertical-align: middle;
+}
