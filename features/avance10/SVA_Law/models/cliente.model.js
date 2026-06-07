@@ -35,44 +35,38 @@ module.exports = class Cliente {
         return db.query(query, [`%${search}%`, sofomId]);
     }
 
-    static async fetchById(clienteId) {
-        const query = `
-            SELECT
-                c.cliente_id,
-                c.razon_social,
-                c.telefono,
-                c.correo_electronico,
-                c.curp,
-                c.rfc,
-                c.genero,
-                c.fecha_nacimiento,
-                c.pais_nacimiento,
-                c.fecha_creacion,
-                c.id_tipo_persona,
-                tp.descripcion AS tipo_persona,
-                c.sofom_id,
-                s.razon_social AS sofom_nombre,
-                c.estatus_alerta_historica,
-                c.ha_sido_peps,
-                dom_cat.opciones AS domicilio,
-                act_cat.opciones AS actividad_economica,
-                ec_cat.opciones AS estado_civil,
-                niv_cat.opciones AS nivel_estudios,
-                emp_cat.opciones AS tipo_empleo,
-                ing_cat.opciones AS ingresos_mensuales
-            FROM clientes c
-            INNER JOIN sofom s ON c.sofom_id = s.sofom_id
-            LEFT JOIN tf_tipos_persona tp ON c.id_tipo_persona = tp.tipo_persona_id
-            LEFT JOIN tf_catalogos dom_cat ON dom_cat.catalogo_id = 5  AND dom_cat.valores = c.domicilio
-            LEFT JOIN tf_catalogos act_cat ON act_cat.catalogo_id = 9  AND act_cat.valores = c.actividad_economica
-            LEFT JOIN tf_catalogos ec_cat  ON ec_cat.catalogo_id  = 14 AND ec_cat.valores  = c.estado_civil
-            LEFT JOIN tf_catalogos niv_cat ON niv_cat.catalogo_id = 17 AND niv_cat.valores = c.nivel_estudios
-            LEFT JOIN tf_catalogos emp_cat ON emp_cat.catalogo_id = 19 AND emp_cat.valores = c.tipo_empleo
-            LEFT JOIN tf_catalogos ing_cat ON ing_cat.catalogo_id = 20 AND ing_cat.valores = c.ingresos_mensuales
-            WHERE c.cliente_id = $1
-        `;
-        return db.query(query, [clienteId]);
-    }
+static async fetchById(clienteId) {
+    const query = `
+        SELECT
+            c.cliente_id,
+            c.razon_social,
+            c.telefono,
+            c.correo_electronico,
+            c.curp,
+            c.rfc,
+            c.genero,
+            c.fecha_nacimiento,
+            c.pais_nacimiento,
+            c.fecha_creacion,
+            c.id_tipo_persona,
+            tp.descripcion          AS tipo_persona,
+            c.sofom_id,
+            s.razon_social          AS sofom_nombre,
+            c.estatus_alerta_historica,
+            c.ha_sido_peps,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.domicilio)             AS domicilio,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.actividad_economica)   AS actividad_economica,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.estado_civil)          AS estado_civil,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.nivel_estudios)        AS nivel_estudios,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.tipo_empleo)           AS tipo_empleo,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.ingresos_mensuales)    AS ingresos_mensuales
+        FROM clientes c
+        INNER JOIN sofom s          ON c.sofom_id        = s.sofom_id
+        LEFT  JOIN tf_tipos_persona tp ON c.id_tipo_persona = tp.tipo_persona_id
+        WHERE c.cliente_id = $1
+    `;
+    return db.query(query, [clienteId]);
+}
 
     static async fetchByIdAndSofom(clienteId, sofomId) {
         const query = `
