@@ -80,38 +80,75 @@
                         <tbody>
                             <% if (alertas.length === 0) { %>
                                 <tr>
-                                    <td colspan="8" class="text-center py-4">
-                                        No hay alertas registradas
-                                    </td>
+                                    <td colspan="9" class="text-center py-4">No hay alertas registradas</td>
                                 </tr>
                             <% } %>
                             <% alertas.forEach(alerta => { %>
-                                <tr class="fila-cliente"
-                                    onclick="window.location='/alertas/<%= alerta.alerta_id %>'">
-                                    <td><%= alerta.alerta_id %></td>
-                                    <td><%= alerta.tipo_alerta %></td>
-                                    <td><%= alerta.tipo_reporte %></td>
-                                    <td><%= alerta.operacion_id || '—' %></td>
-                                    <td style="max-width:220px; font-size:.85rem; color:#555;">
-                                        <%= alerta.descripcion ? alerta.descripcion.slice(0,80) + (alerta.descripcion.length > 80 ? '…' : '') : '—' %>
+                                <tr class="fila-cliente">
+                                    <td onclick="window.location='/alertas/<%= alerta.alerta_id %>'" style="cursor:pointer"><%= alerta.alerta_id %></td>
+                                    <td onclick="window.location='/alertas/<%= alerta.alerta_id %>'" style="cursor:pointer"><%= alerta.tipo_alerta %></td>
+                                    <td onclick="window.location='/alertas/<%= alerta.alerta_id %>'" style="cursor:pointer"><%= alerta.tipo_reporte %></td>
+                                    <td onclick="window.location='/alertas/<%= alerta.alerta_id %>'" style="cursor:pointer"><%= alerta.operacion_id || '—' %></td>
+                                    <td onclick="window.location='/alertas/<%= alerta.alerta_id %>'" style="cursor:pointer; max-width:200px; font-size:.85rem; color:#555;">
+                                        <%= alerta.descripcion ? alerta.descripcion.slice(0,70) + (alerta.descripcion.length > 70 ? '…' : '') : '—' %>
                                     </td>
-                                    <td><%= alerta.requiere_dictamen ? 'Sí' : 'No' %></td>
-                                    <td>
+                                    <td onclick="window.location='/alertas/<%= alerta.alerta_id %>'" style="cursor:pointer"><%= alerta.requiere_dictamen ? 'Sí' : 'No' %></td>
+                                    <td onclick="window.location='/alertas/<%= alerta.alerta_id %>'" style="cursor:pointer">
                                         <% if (alerta.estado_revision) { %>
-                                            <span class="badge-expediente" style="background-color: #2e7d32;">Revisada</span>
+                                            <span class="badge-expediente" style="background-color:#2e7d32;">Revisada</span>
                                         <% } else { %>
-                                            <span class="badge-expediente" style="background-color: var(--red);">Pendiente</span>
+                                            <span class="badge-expediente" style="background-color:var(--red);">Pendiente</span>
                                         <% } %>
                                     </td>
-                                    <td>
+                                    <td onclick="window.location='/alertas/<%= alerta.alerta_id %>'" style="cursor:pointer">
                                         <%= new Date(alerta.fecha_hora_alerta).toLocaleDateString('es-MX') %>
                                     </td>
                                     <td>
-                                        <span class="badge-expediente">Ver detalle</span>
+                                        <% if (!alerta.esta_aprobado && alerta.tipo_alerta_id == 3 && puedeEmitirDictamen) { %>
+                                            <button class="btn btn-success btn-sm px-2 py-0"
+                                                onclick="abrirModalDictamen(<%= alerta.alerta_id %>)"
+                                                title="Emitir dictamen">
+                                                Dictamen
+                                            </button>
+                                        <% } else { %>
+                                            <a href="/alertas/<%= alerta.alerta_id %>" class="badge-expediente">Ver</a>
+                                        <% } %>
                                     </td>
                                 </tr>
                             <% }) %>
                         </tbody>
+
+                        <div class="modal fade" id="modalDictamen" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Emitir dictamen — Alerta #<span id="modalAlertaId"></span></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form id="formDictamen" method="POST">
+                                        <div class="modal-body">
+                                            <label class="form-label fw-semibold">Descripción del dictamen</label>
+                                            <textarea name="descripcion_dictamen" class="form-control" rows="3"
+                                                placeholder="Escribe el dictamen..."></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" name="accion" value="aprobar" class="btn btn-success">Aprobar</button>
+                                            <button type="submit" name="accion" value="rechazar" class="btn btn-danger">Rechazar</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                        function abrirModalDictamen(alertaId) {
+                            document.getElementById('modalAlertaId').textContent = alertaId;
+                            document.getElementById('formDictamen').action = `/alertas/${alertaId}/dictamen`;
+                            new bootstrap.Modal(document.getElementById('modalDictamen')).show();
+                        }
+                        </script>
+
                     </table>
                 </div>
 

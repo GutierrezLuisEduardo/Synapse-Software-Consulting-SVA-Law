@@ -106,6 +106,14 @@ exports.getExpedienteCliente = async (req, res) => {
             return res.status(404).send('Cliente no encontrado');
         }
 
+        const catalogos = await getCatalogos();
+        const catalogosContrato = {
+            canales: (await Contrato.fetchCatalogo(1)).rows,
+            productos: (await Contrato.fetchCatalogo(2)).rows,
+            finalidades: (await Contrato.fetchCatalogo(11)).rows,
+            frecuenciasPago: (await Contrato.fetchCatalogo(21)).rows
+        };
+
         res.render('clientes/expediente', {
             usuario: req.session.usuario,
             activePage: 'clientes',
@@ -114,6 +122,8 @@ exports.getExpedienteCliente = async (req, res) => {
             contratos: contratosDB.rows,
             operaciones: operacionesDB.rows,
             alertas: alertasDB.rows,
+            catalogos,
+            catalogosContrato,
         });
     } catch (error) {
         console.error(error);
@@ -239,5 +249,59 @@ exports.buscarClientes = async (req, res) => {
     } catch (err) {
         console.error('buscarClientes:', err);
         return res.status(500).json({ ok: false, clientes: [] });
+    }
+};
+
+exports.postActualizarPerfilCliente = async (req, res) => {
+    try {
+
+        const clienteId = req.params.id;
+
+        await Cliente.updateCatalogos(
+            clienteId,
+            req.body
+        );
+
+        await Cliente.marcarUltimoCambio(clienteId);
+
+        return res.redirect(`/clientes/${clienteId}?actualizado=1`);
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send('Error al actualizar perfil');
+    }
+};
+
+exports.postActualizarContrato = async (req, res) => {
+    try {
+        const clienteId = req.params.id;
+        const {
+            contrato_id,
+            canal,
+            producto,
+            finalidad_credito,
+            frecuencia_pago
+        } = req.body;
+
+        if (!contrato_id || !canal || !producto || !finalidad_credito || !frecuencia_pago) {
+            return res.status(400).send('Faltan campos obligatorios del contrato');
+        }
+
+        await Contrato.updateCatalogos(
+            parseInt(contrato_id),
+            parseInt(canal),
+            parseInt(producto),
+            parseInt(finalidad_credito),
+            parseInt(frecuencia_pago)
+        );
+
+        await Cliente.marcarPerfilActualizado(clienteId);
+        await Cliente.marcarUltimoCambio(clienteId);
+
+        return res.redirect(`/clientes/${clienteId}?actualizado=1`);
+
+    } catch (err) {
+        console.error('postActualizarContrato:', err);
+        return res.status(500).send('Error actualizando contrato');
     }
 };

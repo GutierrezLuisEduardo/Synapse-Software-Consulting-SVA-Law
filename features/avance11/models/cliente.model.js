@@ -49,19 +49,35 @@ static async fetchById(clienteId) {
             c.pais_nacimiento,
             c.fecha_creacion,
             c.id_tipo_persona,
-            tp.descripcion          AS tipo_persona,
+            tp.descripcion AS tipo_persona,
             c.sofom_id,
-            s.razon_social          AS sofom_nombre,
+            s.razon_social AS sofom_nombre,
             c.estatus_alerta_historica,
             c.ha_sido_peps,
-            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.domicilio)             AS domicilio,
-            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.actividad_economica)   AS actividad_economica,
-            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.estado_civil)          AS estado_civil,
-            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.nivel_estudios)        AS nivel_estudios,
-            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.tipo_empleo)           AS tipo_empleo,
-            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.ingresos_mensuales)    AS ingresos_mensuales
+            c.pais_origen AS pais_origen_id,
+            c.nacionalidad AS nacionalidad_id,
+            c.domicilio AS domicilio_id,
+            c.actividad_economica AS actividad_economica_id,
+            c.vinculado_con_grupo AS vinculado_con_grupo_id,
+            c.estado_civil AS estado_civil_id,
+            c.dependientes_economicos AS dependientes_economicos_id,
+            c.numero_hijos AS numero_hijos_id,
+            c.nivel_estudios AS nivel_estudios_id,
+            c.tipo_vivienda AS tipo_vivienda_id,
+            c.tipo_empleo AS tipo_empleo_id,
+            c.ingresos_mensuales AS ingresos_mensuales_id,
+            c.valor_patrimonio AS valor_patrimonio_id,
+            c.pertenece_partido_politico AS pertenece_partido_politico_id,
+            c.peps AS peps_id,
+            c.edad AS edad_id,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.domicilio) AS domicilio,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.actividad_economica) AS actividad_economica,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.estado_civil) AS estado_civil,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.nivel_estudios) AS nivel_estudios,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.tipo_empleo) AS tipo_empleo,
+            (SELECT tc.opciones FROM tf_catalogos tc WHERE tc.id_opcion = c.ingresos_mensuales) AS ingresos_mensuales
         FROM clientes c
-        INNER JOIN sofom s          ON c.sofom_id        = s.sofom_id
+        INNER JOIN sofom s ON c.sofom_id = s.sofom_id
         LEFT  JOIN tf_tipos_persona tp ON c.id_tipo_persona = tp.tipo_persona_id
         WHERE c.cliente_id = $1
     `;
@@ -207,5 +223,87 @@ static async fetchById(clienteId) {
             LIMIT 10
         `;
         return db.query(query, [`%${termino}%`, sofomId]);
+    }
+
+    static async updateCatalogos(clienteId, {
+        pais_origen,
+        nacionalidad,
+        domicilio,
+        actividad_economica,
+        vinculado_con_grupo,
+        estado_civil,
+        dependientes_economicos,
+        numero_hijos,
+        nivel_estudios,
+        tipo_vivienda,
+        tipo_empleo,
+        ingresos_mensuales,
+        valor_patrimonio,
+        pertenece_partido_politico,
+        peps,
+        edad
+    }) {
+
+        const query = `
+            UPDATE clientes
+            SET
+                pais_origen = $1,
+                nacionalidad = $2,
+                domicilio = $3,
+                actividad_economica = $4,
+                vinculado_con_grupo = $5,
+                estado_civil = $6,
+                dependientes_economicos = $7,
+                numero_hijos = $8,
+                nivel_estudios = $9,
+                tipo_vivienda = $10,
+                tipo_empleo = $11,
+                ingresos_mensuales = $12,
+                valor_patrimonio = $13,
+                pertenece_partido_politico = $14,
+                peps = $15,
+                edad = $16,
+                ha_actualizado_perfil = TRUE
+            WHERE cliente_id = $17
+        `;
+
+        return db.query(query, [
+            pais_origen,
+            nacionalidad,
+            domicilio,
+            actividad_economica,
+            vinculado_con_grupo,
+            estado_civil,
+            dependientes_economicos,
+            numero_hijos,
+            nivel_estudios,
+            tipo_vivienda,
+            tipo_empleo,
+            ingresos_mensuales,
+            valor_patrimonio,
+            pertenece_partido_politico,
+            peps || null,
+            edad || null,
+            clienteId
+        ]);
+    }
+
+    static async marcarUltimoCambio(clienteId) {
+        const query = `
+            UPDATE perfiles_cliente
+            SET ultimo_cambio = NOW()
+            WHERE cliente_id = $1
+        `;
+
+        return db.query(query, [clienteId]);
+    }
+
+    static async marcarPerfilActualizado(clienteId) {
+        const query = `
+            UPDATE clientes
+            SET ha_actualizado_perfil = TRUE
+            WHERE cliente_id = $1
+        `;
+        return db.query(query, [clienteId]);
     }
 };

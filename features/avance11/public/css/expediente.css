@@ -162,7 +162,6 @@
     margin: 0;
 }
 
-/* ── Pestañas del expediente ─────────────────────────── */
 .exp-tabs {
     display: flex;
     gap: 4px;
@@ -201,7 +200,6 @@
     display: block;
 }
 
-/* Contador en la pestaña */
 .tab-badge {
     display: inline-block;
     background: #e8eaf6;

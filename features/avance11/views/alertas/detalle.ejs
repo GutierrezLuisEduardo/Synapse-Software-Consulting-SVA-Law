@@ -31,7 +31,6 @@
                                 <p><strong>Tipo de alerta:</strong> <%= alerta.tipo_alerta %></p>
                                 <p><strong>Tipo de reporte:</strong> <%= alerta.tipo_reporte %></p>
                                 <p><strong>Descripción:</strong> <%= alerta.descripcion_alerta || '—' %></p>
-                                <p><strong>Aprobada:</strong> <%= alerta.esta_aprobado ? 'Sí' : 'No' %></p>
                                 <p><strong>ID Operación relacionada:</strong> <%= alerta.operacion_id || '—' %></p>
                                 <p><strong>Requiere dictamen:</strong> <%= alerta.requiere_dictamen ? 'Sí' : 'No' %></p>
                                 <% if (alerta.requiere_dictamen) { %>
@@ -47,10 +46,24 @@
                                         <span class="badge-expediente" style="background-color: var(--red);">Pendiente</span>
                                     <% } %>
                                 </p>
+
+                                <% if (alerta.tipo_alerta_id == 3 && alerta.estado_revision) { %>
+                                    <p><strong>Dictamen:</strong>
+                                        <% if (alerta.esta_aprobado) { %>
+                                            <span class="badge-expediente" style="background-color: #2e7d32;">Aprobada</span>
+                                        <% } else { %>
+                                            <span class="badge-expediente" style="background-color: var(--red);">Rechazada</span>
+                                        <% } %>
+                                    </p>
+                                    <% if (alerta.descripcion_alerta) { %>
+                                        <p><strong>Observaciones:</strong> <%= alerta.descripcion_alerta %></p>
+                                    <% } %>
+                                <% } %>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Reporte asociado -->
                     <div class="col-lg-6">
                         <div class="expediente-card h-100">
                             <h5 class="mb-4" style="font-weight:700; border-bottom: 2px solid var(--light); padding-bottom:12px;">Reporte generado</h5>
@@ -65,12 +78,13 @@
                                     <p><strong>Descripción:</strong> <%= reporte.descripcion %></p>
                                     <% if (reporte.evidencia) { %>
                                         <p><strong>Evidencia:</strong>
-                                            <a href="<%= reporte.evidencia %>" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                            <a href="/reportes/evidencia?ruta=<%= encodeURIComponent(reporte.evidencia) %>"
+                                            target="_blank" class="btn btn-sm btn-outline-secondary">
                                                 Descargar evidencia
                                             </a>
                                         </p>
                                     <% } %>
-                                    <% if (reporte.dias_restantes_dictamen !== null) { %>
+                                    <% if (reporte.dias_restantes_dictamen !== null && reporte.dias_restantes_dictamen !== undefined) { %>
                                         <p><strong>Días restantes para dictamen:</strong>
                                             <span style="font-weight:700; color: #db6300">
                                                 <%= reporte.dias_restantes_dictamen %>
@@ -85,9 +99,9 @@
                                         </p>
                                     <% } %>
                                     <% if (reporte.dictamen) { %>
-                                        <p><strong>Dictamen:</strong> <%= reporte.dictamen %></p>
+                                        <p><strong>Dictamen del reporte:</strong> <%= reporte.dictamen %></p>
                                     <% } else { %>
-                                        <p class="text-muted" style="font-size:0.9rem;">Sin dictamen emitido aún.</p>
+                                        <p class="text-muted" style="font-size:0.9rem;">Sin dictamen de reporte emitido aún.</p>
                                     <% } %>
                                 </div>
                             <% } else { %>
@@ -98,27 +112,58 @@
                         </div>
                     </div>
 
-                    <% if (puedeEmitirDictamen && !alerta.esta_aprobado && alerta.tipo_alerta_id === 3) { %>
-                    <div class="row mt-4">
-                        <div class="col-lg-8">
-                            <div class="expediente-card">
-                                <h5 class="mb-3" style="font-weight:700; border-bottom:2px solid var(--light); padding-bottom:12px;">
-                                    Emitir dictamen
-                                </h5>
+                    <% if (alerta.tipo_alerta_id == 3) { %>
+                    <div class="col-12 mt-2">
+                        <div class="expediente-card">
+                            <h5 class="mb-3" style="font-weight:700; border-bottom:2px solid var(--light); padding-bottom:12px;">
+                                Dictamen de la alerta
+                            </h5>
+
+                            <% if (puedeEmitirDictamen) { %>
+                                <% if (alerta.estado_revision) { %>
+                                    <div class="alert <%= alerta.esta_aprobado ? 'alert-success' : 'alert-danger' %> mb-3" role="alert">
+                                        <strong>Dictamen actual:</strong>
+                                        <%= alerta.esta_aprobado ? ' Aprobada' : ' Rechazada' %>
+                                        — Puedes modificarlo a continuación.
+                                    </div>
+                                <% } %>
+
                                 <form action="/alertas/<%= alerta.alerta_id %>/dictamen" method="POST">
                                     <div class="mb-3">
-                                        <label class="form-label fw-semibold">Descripción del dictamen</label>
-                                        <textarea name="descripcion_dictamen" class="form-control" rows="3"
-                                            placeholder="Escribe el dictamen..."></textarea>
+                                        <label class="form-label fw-semibold">
+                                            Observaciones <span class="text-muted fw-normal">(opcional)</span>
+                                        </label>
+                                        <textarea
+                                            name="descripcion_dictamen"
+                                            class="form-control"
+                                            rows="3"
+                                            placeholder="Escribe las observaciones o justificación del dictamen..."
+                                        ><%= alerta.descripcion_alerta || '' %></textarea>
                                     </div>
                                     <div class="d-flex gap-2">
                                         <button type="submit" name="accion" value="aprobar"
-                                            class="btn btn-success px-4">Aprobar</button>
+                                            class="btn btn-success px-4"> Aprobar </button>
                                         <button type="submit" name="accion" value="rechazar"
-                                            class="btn btn-danger px-4">Rechazar</button>
+                                            class="btn btn-danger px-4"> Rechazar </button>
                                     </div>
                                 </form>
-                            </div>
+
+                            <% } else { %>
+                                <% if (alerta.estado_revision) { %>
+                                    <div class="alert <%= alerta.esta_aprobado ? 'alert-success' : 'alert-danger' %>" role="alert">
+                                        <strong>Resultado:</strong>
+                                        <%= alerta.esta_aprobado ? ' Aprobada' : ' Rechazada' %>
+                                    </div>
+                                    <% if (alerta.descripcion_alerta) { %>
+                                        <p><strong>Observaciones:</strong> <%= alerta.descripcion_alerta %></p>
+                                    <% } %>
+                                <% } else { %>
+                                    <p class="text-muted" style="font-size:0.9rem;">
+                                        Aún no se ha emitido un dictamen para esta alerta.
+                                    </p>
+                                <% } %>
+                            <% } %>
+
                         </div>
                     </div>
                     <% } %>

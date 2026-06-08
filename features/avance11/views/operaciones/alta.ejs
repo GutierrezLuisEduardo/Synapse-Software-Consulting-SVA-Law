@@ -139,6 +139,42 @@
                                     <%= !puedeEditar ? 'disabled' : '' %> required>
                             </div>
 
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    Tipo de Moneda <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="mt-2">
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="es_moneda_extranjera" id="moneda_nacional" value="false" checked
+                                            <%= !puedeEditar ? 'disabled' : '' %> >
+                                        <label class="form-check-label" for="moneda_nacional">
+                                            Moneda nacional
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            name="es_moneda_extranjera"
+                                            id="moneda_extranjera"
+                                            value="true"
+                                            <%= !puedeEditar ? 'disabled' : '' %>
+                                        >
+
+                                        <label
+                                            class="form-check-label"
+                                            for="moneda_extranjera"
+                                        >
+                                            Moneda extranjera
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 

@@ -30,11 +30,19 @@ router.get('/clientes/:id/verificar', isAuth,
     clienteController.verificarCliente
 );
 
-router.get('/clientes/buscar', isAuth, clienteController.buscarClientes);
-
 router.get('/clientes/:id', isAuth,
     roleAuth(ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO, ROLES.AUDITOR),
     clienteController.getExpedienteCliente
+);
+
+router.post('/clientes/:id/actualizar-perfil', isAuth,
+    roleAuth(ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO),
+    clienteController.postActualizarPerfilCliente
+);
+
+router.post('/clientes/:id/actualizar-contrato', isAuth,
+    roleAuth(ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO),
+    clienteController.postActualizarContrato
 );
 
 module.exports = router;

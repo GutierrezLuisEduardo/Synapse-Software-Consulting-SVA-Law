@@ -6,7 +6,7 @@ const db = require('../util/database');
 exports.getAlertas = async (req, res) => {
     try {
         const sofomId = req.session.usuario.sofom_id;
-        const rol     = req.session.usuario.rol;
+        const rol = req.session.usuario.rol;
         const { tipo_alerta_id, tipo_reporte_id } = req.query;
 
         // Solo el Oficial de cumplimiento puede ver ROIP
@@ -19,14 +19,15 @@ exports.getAlertas = async (req, res) => {
         ]);
 
         res.render('alertas/index', {
-            usuario:      req.session.usuario,
-            activePage:   'alertas',
-            alertas:      alertasResult.rows,
-            tiposAlerta:  tiposAlertaResult.rows,
+            usuario: req.session.usuario,
+            activePage: 'alertas',
+            alertas: alertasResult.rows,
+            tiposAlerta: tiposAlertaResult.rows,
             tiposReporte: tiposReporteResult.rows,
             filtros: { tipo_alerta_id: tipo_alerta_id || '', tipo_reporte_id: tipo_reporte_id || '' },
-            esOficial:    rol === ROLES.OFICIAL,
-            error:        null
+            esOficial: rol === ROLES.OFICIAL,
+            puedeEmitirDictamen: [ROLES.OFICIAL, ROLES.ADMIN].includes(rol),
+            error: null
         });
     } catch (error) {
         console.error(error);
@@ -38,7 +39,7 @@ exports.getDetalleAlerta = async (req, res) => {
     try {
         const alertaId = req.params.id;
         const sofomId  = req.session.usuario.sofom_id;
-        const rol      = req.session.usuario.rol;
+        const rol = req.session.usuario.rol;
 
         const alertaResult = await Alerta.fetchById(alertaId, sofomId);
         if (alertaResult.rows.length === 0) return res.status(404).send('Alerta no encontrada');
@@ -84,6 +85,12 @@ exports.postDictamen = async (req, res) => {
 
         if (![ROLES.OFICIAL, ROLES.ADMIN].includes(rol)) {
             return res.status(403).render('error/403', { usuario: req.session.usuario });
+        }
+
+        if (!descripcion_dictamen?.trim()) {
+            return res.status(400).send(
+                'Debe capturarse un dictamen'
+            );
         }
 
         const aprobado = accion === 'aprobar';

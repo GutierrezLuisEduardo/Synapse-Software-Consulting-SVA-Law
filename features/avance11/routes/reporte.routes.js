@@ -36,4 +36,11 @@ router.post(
     reporteCtrl.postCrearROIP
 );
 
+router.get(
+    '/reportes/evidencia',
+    isAuth,
+    roleAuth(ROLES.OFICIAL, ROLES.ADMIN, ROLES.EMPLEADO, ROLES.AUDITOR),
+    reporteCtrl.getUrlEvidencia
+);
+
 module.exports = router;

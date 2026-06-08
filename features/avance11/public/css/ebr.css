@@ -3,10 +3,10 @@
                 font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: .05em;
-                color: var(--color-primary, #4a6fa5);
+                color: var(--red);
                 margin-bottom: 1rem;
                 padding-bottom: .4rem;
-                border-bottom: 2px solid var(--color-primary, #4a6fa5);
+                border-bottom: 2px solid var(--red);
             }
             .ebr-criterio-row {
                 display: flex;
@@ -39,6 +39,6 @@
                 padding: .25em .6em;
                 border-radius: 12px;
                 background: #e8edf5;
-                color: #4a6fa5;
+                color: var(--red);
                 font-weight: 600;
             }
