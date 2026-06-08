@@ -36,66 +36,218 @@
                     <div class="row g-4 mb-4">
                         <div class="col-lg-7">
                             <div class="exp-card h-100">
-                                <h2 class="exp-section-title">Datos Personales</h2>
-                                <div class="datos-grid">
-                                    <div class="dato-item">
-                                        <span class="dato-label">ID</span>
-                                        <span class="dato-valor"><%= cliente.cliente_id %></span>
+                                <form action="/clientes/<%= cliente.cliente_id %>/actualizar-perfil" method="POST">
+
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h2 class="exp-section-title mb-0">Datos Personales</h2>
+                                        <button type="submit" class="btn btn-expediente btn-sm"
+                                                data-testid="btn-guardar-perfil">
+                                            Guardar cambios
+                                        </button>
                                     </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Nombre / Razón Social</span>
-                                        <span class="dato-valor"><%= cliente.razon_social %></span>
+
+                                    <div class="datos-grid">
+                                        <div class="dato-item">
+                                            <span class="dato-label">ID</span>
+                                            <span class="dato-valor"><%= cliente.cliente_id %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">Nombre / Razón Social</span>
+                                            <span class="dato-valor"><%= cliente.razon_social %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">Tipo de Persona</span>
+                                            <span class="dato-valor"><%= cliente.tipo_persona || '—' %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">Teléfono</span>
+                                            <span class="dato-valor"><%= cliente.telefono || '—' %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">Correo electrónico</span>
+                                            <span class="dato-valor"><%= cliente.correo_electronico || '—' %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">CURP</span>
+                                            <span class="dato-valor"><%= cliente.curp || '—' %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">RFC</span>
+                                            <span class="dato-valor"><%= cliente.rfc || '—' %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">Género</span>
+                                            <span class="dato-valor"><%= cliente.genero || '—' %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">Fecha de nacimiento</span>
+                                            <span class="dato-valor">
+                                                <%= cliente.fecha_nacimiento ? new Date(cliente.fecha_nacimiento).toLocaleDateString('es-MX') : '—' %>
+                                            </span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">SOFOM</span>
+                                            <span class="dato-valor"><%= cliente.sofom_nombre %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">Alerta histórica</span>
+                                            <span class="dato-valor"><%= cliente.estatus_alerta_historica ? 'Sí' : 'No' %></span>
+                                        </div>
+                                        <div class="dato-item">
+                                            <span class="dato-label">Ha sido PEPS</span>
+                                            <span class="dato-valor"><%= cliente.ha_sido_peps ? 'Sí' : 'No' %></span>
+                                        </div>
+
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">País de origen</span>
+                                            <select name="pais_origen" class="form-select form-select-sm" data-testid="select-pais-origen">
+                                                <% catalogos.paisOrigen.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.pais_origen_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Nacionalidad</span>
+                                            <select name="nacionalidad" class="form-select form-select-sm" data-testid="select-nacionalidad">
+                                                <% catalogos.nacionalidad.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.nacionalidad_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Domicilio</span>
+                                            <select name="domicilio" class="form-select form-select-sm" data-testid="select-domicilio">
+                                                <% catalogos.domicilio.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.domicilio_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Actividad Económica</span>
+                                            <select name="actividad_economica" class="form-select form-select-sm" data-testid="select-actividad-economica">
+                                                <% catalogos.actividadEconomica.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.actividad_economica_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Vinculado con grupo</span>
+                                            <select name="vinculado_con_grupo" class="form-select form-select-sm" data-testid="select-vinculado-grupo">
+                                                <% catalogos.vinculadoGrupo.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.vinculado_con_grupo_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Estado civil</span>
+                                            <select name="estado_civil" class="form-select form-select-sm" data-testid="select-estado-civil">
+                                                <% catalogos.estadoCivil.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.estado_civil_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Dependientes económicos</span>
+                                            <select name="dependientes_economicos" class="form-select form-select-sm" data-testid="select-dependientes">
+                                                <% catalogos.dependientesEconomicos.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.dependientes_economicos_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Número de hijos</span>
+                                            <select name="numero_hijos" class="form-select form-select-sm" data-testid="select-numero-hijos">
+                                                <% catalogos.numeroHijos.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.numero_hijos_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Nivel de estudios</span>
+                                            <select name="nivel_estudios" class="form-select form-select-sm" data-testid="select-nivel-estudios">
+                                                <% catalogos.nivelEstudios.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.nivel_estudios_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Tipo de vivienda</span>
+                                            <select name="tipo_vivienda" class="form-select form-select-sm" data-testid="select-tipo-vivienda">
+                                                <% catalogos.tipoVivienda.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.tipo_vivienda_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Tipo de empleo</span>
+                                            <select name="tipo_empleo" class="form-select form-select-sm" data-testid="select-tipo-empleo">
+                                                <% catalogos.tipoEmpleo.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.tipo_empleo_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Ingresos mensuales</span>
+                                            <select name="ingresos_mensuales" class="form-select form-select-sm" data-testid="select-ingresos">
+                                                <% catalogos.ingresosMensuales.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.ingresos_mensuales_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Valor del patrimonio</span>
+                                            <select name="valor_patrimonio" class="form-select form-select-sm" data-testid="select-valor-patrimonio">
+                                                <% catalogos.valorPatrimonio.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.valor_patrimonio_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Pertenece a partido político</span>
+                                            <select name="pertenece_partido_politico" class="form-select form-select-sm" data-testid="select-partido">
+                                                <% catalogos.pertenecePartido.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.pertenece_partido_politico_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">PEPS</span>
+                                            <select name="peps" class="form-select form-select-sm" data-testid="select-peps">
+                                                <option value="">— Sin asignar —</option>
+                                                <% catalogos.peps.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.peps_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="dato-item">
+                                            <span class="dato-label">Rango de edad</span>
+                                            <select name="edad" class="form-select form-select-sm" data-testid="select-edad">
+                                                <option value="">— Sin asignar —</option>
+                                                <% catalogos.edad.forEach(op => { %>
+                                                    <option value="<%= op.id_opcion %>" <%= cliente.edad_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Tipo de Persona</span>
-                                        <span class="dato-valor"><%= cliente.tipo_persona || '—' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Teléfono</span>
-                                        <span class="dato-valor"><%= cliente.telefono || '—' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Correo electrónico</span>
-                                        <span class="dato-valor"><%= cliente.correo_electronico || '—' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">CURP</span>
-                                        <span class="dato-valor"><%= cliente.curp || '—' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">RFC</span>
-                                        <span class="dato-valor"><%= cliente.rfc || '—' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Género</span>
-                                        <span class="dato-valor"><%= cliente.genero || '—' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Fecha de nacimiento</span>
-                                        <span class="dato-valor"><%= cliente.fecha_nacimiento ? new Date(cliente.fecha_nacimiento).toLocaleDateString('es-MX') : '—' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Domicilio</span>
-                                        <span class="dato-valor"><%= cliente.domicilio || '—' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Actividad Económica</span>
-                                        <span class="dato-valor"><%= cliente.actividad_economica || '—' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">SOFOM</span>
-                                        <span class="dato-valor"><%= cliente.sofom_nombre %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Alerta histórica</span>
-                                        <span class="dato-valor"><%= cliente.estatus_alerta_historica ? 'Sí' : 'No' %></span>
-                                    </div>
-                                    <div class="dato-item">
-                                        <span class="dato-label">Ha sido PEPS</span>
-                                        <span class="dato-valor"><%= cliente.ha_sido_peps ? 'Sí' : 'No' %></span>
-                                    </div>
-                                </div>
+                                </form>
                             </div>
+
                         </div>
 
                         <div class="col-lg-5">
@@ -148,9 +300,11 @@
                                 <table class="tabla-exp">
                                     <thead>
                                         <tr>
-                                            <th>Tipo de Documento</th>
-                                            <th>Fecha de Carga</th>
-                                            <th>Archivo</th>
+                                            <th>Canal</th>
+                                            <th>Producto</th>
+                                            <th>Finalidad</th>
+                                            <th>Frecuencia</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -179,27 +333,74 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>Descripción</th>
-                                            <th>Producto</th>
                                             <th>Canal</th>
-                                            <th>Monto Total</th>
-                                            <th>Monto Pagado</th>
-                                            <th>Pagos (hechos/acordados)</th>
-                                            <th>Inicio</th>
-                                            <th>Fin</th>
+                                            <th>Producto</th>
+                                            <th>Finalidad</th>
+                                            <th>Frecuencia de pago</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <% contratos.forEach(contrato => { %>
-                                            <tr>
+                                            <tr data-testid="fila-contrato-<%= contrato.contrato_id %>">
                                                 <td><%= contrato.contrato_id %></td>
                                                 <td><%= contrato.descripcion || '—' %></td>
-                                                <td><%= contrato.producto || '—' %></td>
-                                                <td><%= contrato.canal || '—' %></td>
-                                                <td>$<%= parseFloat(contrato.monto_total_pago).toLocaleString('es-MX', { minimumFractionDigits: 2 }) %></td>
-                                                <td>$<%= parseFloat(contrato.monto_pagado || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 }) %></td>
-                                                <td><%= contrato.numero_pagos_hechos %> / <%= contrato.numero_pagos_acordados %></td>
-                                                <td><%= contrato.fecha_inicio ? new Date(contrato.fecha_inicio).toLocaleDateString('es-MX') : '—' %></td>
-                                                <td><%= contrato.fecha_finalizacion ? new Date(contrato.fecha_finalizacion).toLocaleDateString('es-MX') : '—' %></td>
+
+                                                <td>
+                                                    <select name="canal"
+                                                            form="form-contrato-<%= contrato.contrato_id %>"
+                                                            class="form-select form-select-sm"
+                                                            data-testid="select-canal-<%= contrato.contrato_id %>">
+                                                        <% catalogosContrato.canales.forEach(op => { %>
+                                                            <option value="<%= op.id_opcion %>" <%= contrato.canal_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                        <% }) %>
+                                                    </select>
+                                                </td>
+
+                                                <td>
+                                                    <select name="producto"
+                                                            form="form-contrato-<%= contrato.contrato_id %>"
+                                                            class="form-select form-select-sm"
+                                                            data-testid="select-producto-<%= contrato.contrato_id %>">
+                                                        <% catalogosContrato.productos.forEach(op => { %>
+                                                            <option value="<%= op.id_opcion %>" <%= contrato.producto_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                        <% }) %>
+                                                    </select>
+                                                </td>
+
+                                                <td>
+                                                    <select name="finalidad_credito"
+                                                            form="form-contrato-<%= contrato.contrato_id %>"
+                                                            class="form-select form-select-sm"
+                                                            data-testid="select-finalidad-<%= contrato.contrato_id %>">
+                                                        <% catalogosContrato.finalidades.forEach(op => { %>
+                                                            <option value="<%= op.id_opcion %>" <%= contrato.finalidad_credito_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                        <% }) %>
+                                                    </select>
+                                                </td>
+
+                                                <td>
+                                                    <select name="frecuencia_pago"
+                                                            form="form-contrato-<%= contrato.contrato_id %>"
+                                                            class="form-select form-select-sm"
+                                                            data-testid="select-frecuencia-<%= contrato.contrato_id %>">
+                                                        <% catalogosContrato.frecuenciasPago.forEach(op => { %>
+                                                            <option value="<%= op.id_opcion %>" <%= contrato.frecuencia_pago_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                                        <% }) %>
+                                                    </select>
+                                                </td>
+
+                                                <td>
+                                                    <form id="form-contrato-<%= contrato.contrato_id %>"
+                                                        action="/clientes/<%= cliente.cliente_id %>/actualizar-contrato"
+                                                        method="POST">
+                                                        <input type="hidden" name="contrato_id" value="<%= contrato.contrato_id %>">
+                                                        <button type="submit" class="btn btn-expediente btn-sm"
+                                                                data-testid="btn-guardar-contrato-<%= contrato.contrato_id %>">
+                                                            Guardar
+                                                        </button>
+                                                    </form>
+                                                </td>
                                             </tr>
                                         <% }) %>
                                     </tbody>

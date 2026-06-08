@@ -1,4 +1,5 @@
 const db = require('../util/database');
+const { SUPABASE_URL, SUPABASE_EVIDENCES_BUCKET } = require('../config/env');
 
 module.exports = class Alerta {
 
@@ -25,6 +26,8 @@ module.exports = class Alerta {
         const query = `
             SELECT
                 a.alerta_id,
+                a.tipo_alerta_id,
+                a.tipo_reporte_id,
                 a.operacion_id,
                 a.estado_revision,
                 a.fecha_hora_alerta,
@@ -127,18 +130,60 @@ module.exports = class Alerta {
 
     // Aprobar o rechazar dictamen de una alerta (esta_aprobado + descripcion)
     static async emitirDictamen(alertaId, sofomId, aprobado, descripcionDictamen) {
-        const query = `
-            UPDATE alertas
-            SET esta_aprobado = $1,
-                estado_revision = TRUE,
-                descripcion = CASE WHEN $2::text IS NOT NULL THEN $2 ELSE descripcion END
-            WHERE alerta_id = $3 AND sofom_id = $4
-            RETURNING *
-        `;
-        return db.query(query, [aprobado, descripcionDictamen || null, alertaId, sofomId]);
+        const client = await db.connect();
+        try {
+            await client.query('BEGIN');
+
+            const alertaResult = await client.query(`
+                SELECT reporte_id
+                FROM alertas
+                WHERE alerta_id = $1
+                AND sofom_id = $2
+            `, [alertaId, sofomId]);
+
+            if (alertaResult.rows.length === 0) {
+                throw new Error('Alerta no encontrada');
+            }
+
+            const reporteId = alertaResult.rows[0].reporte_id;
+
+            await client.query(`
+                UPDATE alertas
+                SET
+                    esta_aprobado = $1,
+                    estado_revision = TRUE
+                WHERE alerta_id = $2
+                AND sofom_id = $3
+            `, [aprobado, alertaId, sofomId]);
+
+            if (reporteId) {
+
+                await client.query(`
+                    UPDATE reportes
+                    SET
+                        dictamen = $1,
+                        dictamen_emitido = TRUE
+                    WHERE reporte_id = $2
+                    AND sofom_id = $3
+                `, [
+                    descripcionDictamen,
+                    reporteId,
+                    sofomId
+                ]);
+            }
+
+            await client.query('COMMIT');
+
+        } catch (err) {
+            await client.query('ROLLBACK');
+            throw err;
+
+        } finally {
+            client.release();
+
+        }
     }
 
-    // Fetch del reporte asociado directamente por reporte_id (para alertas que ya tienen reporte_id)
     static async fetchReporteById(reporteId, sofomId) {
         const query = `
             SELECT
@@ -148,7 +193,7 @@ module.exports = class Alerta {
                 tr.descripcion AS tipo_reporte,
                 tr.requiere_dictamen,
                 CASE WHEN r.plazo_dictamen IS NOT NULL
-                    THEN r.plazo_dictamen - CURRENT_DATE
+                    THEN (r.plazo_dictamen - CURRENT_DATE)
                     ELSE NULL
                 END AS dias_restantes_dictamen
             FROM reportes r

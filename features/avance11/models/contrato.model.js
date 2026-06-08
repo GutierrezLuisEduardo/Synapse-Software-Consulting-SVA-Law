@@ -17,6 +17,7 @@ module.exports = class Contrato {
                     c.numero_pagos_hechos,
                     c.canal,
                     c.producto,
+                    c.finalidad_credito,
                     c.frecuencia_pago
                 FROM contratos c
                 INNER JOIN perfiles_cliente pc ON pc.perfiles_cliente_id = c.perfiles_cliente_id
@@ -41,6 +42,10 @@ module.exports = class Contrato {
                 cts.pago_por_operacion,
                 cts.numero_pagos_acordados,
                 cts.numero_pagos_hechos,
+                cts.canal AS canal_id,
+                cts.producto AS producto_id,
+                cts.finalidad_credito AS finalidad_credito_id,
+                cts.frecuencia_pago AS frecuencia_pago_id,
                 can_cat.opciones  AS canal,
                 prod_cat.opciones AS producto,
                 fp_cat.opciones   AS frecuencia_pago
@@ -86,5 +91,32 @@ module.exports = class Contrato {
             ORDER BY valores ASC
         `;
         return db.query(query, [catalogoId]);
+    }
+
+    static async updateCatalogos(
+        contratoId,
+        canal,
+        producto,
+        finalidadCredito,
+        frecuenciaPago
+    ) {
+
+        const query = `
+            UPDATE contratos
+            SET
+                canal = $1,
+                producto = $2,
+                finalidad_credito = $3,
+                frecuencia_pago = $4
+            WHERE contrato_id = $5
+        `;
+
+        return db.query(query, [
+            canal,
+            producto,
+            finalidadCredito,
+            frecuenciaPago,
+            contratoId
+        ]);
     }
 };

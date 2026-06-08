@@ -2,14 +2,12 @@ const Reporte  = require('../models/reporte.model');
 const ROLES    = require('../config/roles');
 const { createClient } = require('@supabase/supabase-js');
 
-const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_EVIDENCES_BUCKET } = require('../config/env');
 
-const EVIDENCIAS_BUCKET = process.env.SUPABASE_EVIDENCES_BUCKET || 'evidencias';
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-// Roles que pueden crear un ROIP
+const EVIDENCIAS_BUCKET = SUPABASE_EVIDENCES_BUCKET || 'evidencias';
+
 const ROLES_ROIP = [ROLES.OFICIAL, ROLES.ADMIN, ROLES.EMPLEADO];
 
 // GET reportes/crear, muestra formulario de creación de ROIP
@@ -75,6 +73,10 @@ exports.postCrearROIP = async (req, res) => {
 
         rutaEvidencia = `sofom_${sofomId}/roip/${Date.now()}_${nombreLimpio}`;
 
+        const { data, error } = await supabase.storage.listBuckets();
+        console.log('Buckets disponibles:', data);
+        console.log('Error:', error);
+
         const { error: storageError } = await supabase.storage
             .from(EVIDENCIAS_BUCKET)
             .upload(rutaEvidencia, archivo.buffer, {
@@ -102,5 +104,34 @@ exports.postCrearROIP = async (req, res) => {
         console.error('postCrearROIP (INSERT):', err);
 
         return renderError('Error al registrar el reporte. Intenta de nuevo.');
+    }
+};
+
+exports.getUrlEvidencia = async (req, res) => {
+    try {
+        const rutaArchivo = req.query.ruta;
+        if (!rutaArchivo || !rutaArchivo.trim()) {
+            return res.status(400).json({ error: 'Ruta no especificada.' });
+        }
+
+        const sofomId = req.session.usuario.sofom_id;
+        if (!rutaArchivo.startsWith(`sofom_${sofomId}/`)) {
+            console.log('Acceso denegado — ruta:', rutaArchivo, '| sofomId:', sofomId);
+            return res.status(403).json({ error: 'Acceso no permitido.' });
+        }
+
+        const { data, error } = await supabase.storage
+            .from(EVIDENCIAS_BUCKET)
+            .createSignedUrl(rutaArchivo, 60 * 60);
+
+        if (error) {
+            console.error('Error generando signed URL:', error);
+            return res.status(500).json({ error: 'Error al generar la URL.' });
+        }
+
+        return res.redirect(data.signedUrl);
+    } catch (err) {
+        console.error('getUrlEvidencia:', err);
+        return res.status(500).send('Error interno del servidor.');
     }
 };
