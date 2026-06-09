@@ -48,12 +48,12 @@ En Synapse Software Consulting ofrecemos servicios de consultoría orientados al
 
 Requisitos previos
 
-Node.js >= 18.x (recomendado 20.x LTS)
-npm >= 9.x
-Acceso a PostgreSQL (Supabase en este proyecto)
-Buckets de Supabase Storage para documentos y evidencias
-node -v
-npm -v
+- Node.js >= 18.x (recomendado 20.x LTS)
+- npm >= 9.x
+- Acceso a PostgreSQL (Supabase en este proyecto)
+- Buckets de Supabase Storage para documentos y evidencias
+- node -v
+- npm -v
 
 Instalar dependencias
 
