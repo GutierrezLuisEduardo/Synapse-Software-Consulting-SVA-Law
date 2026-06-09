@@ -3,7 +3,7 @@
   "version": "8.0.0",
   "description": "",
   "license": "ISC",
-  "author": "Víctor Adrián García Galván y Luis Eduardo Gutiérrez Chavarría",
+  "author": "Víctor Adrián García Galván y Luis Eduardo Gutiérrez Chavarría.",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
