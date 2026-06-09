@@ -40,6 +40,5 @@ Ejemplos:
 - No se permiten commits directos a main ni develop
 - Todo cambio debe hacerse mediante Pull Request
 - Las ramas personales se eliminan después del merge
-=======
+
 En Synapse Software Consulting ofrecemos servicios de consultoría orientados al desarrollo de sistemas y bases de datos.
->>>>>>> main
