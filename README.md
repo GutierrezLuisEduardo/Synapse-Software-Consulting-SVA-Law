@@ -42,3 +42,25 @@ Ejemplos:
 - Las ramas personales se eliminan después del merge
 
 En Synapse Software Consulting ofrecemos servicios de consultoría orientados al desarrollo de sistemas y bases de datos.
+
+
+### Como correr el proyecto
+
+Requisitos previos
+
+Node.js >= 18.x (recomendado 20.x LTS)
+npm >= 9.x
+Acceso a PostgreSQL (Supabase en este proyecto)
+Buckets de Supabase Storage para documentos y evidencias
+node -v
+npm -v
+
+Instalar dependencias
+
+`npm install`
+Esto instala: express, express-session, body-parser, ejs, pg, connect-pg-simple, @supabase/supabase-js, bcryptjs, multer, archiver, dotenv.
+
+
+Arrancar
+`npm start`
+Equivale a `node index.js`. El servidor queda disponible en http://localhost:3076 (redirige a /login).
