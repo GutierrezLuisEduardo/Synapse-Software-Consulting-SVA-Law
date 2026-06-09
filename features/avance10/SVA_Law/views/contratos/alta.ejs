@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/clientes.css">
+        <link rel="stylesheet" href="/css/expediente.css">
+    </head>
+    <body>
+        <%- include('../partials/navbar') %>
+
+        <div class="main-content">
+            <div class="container py-5">
+
+                <h1 class="page-title mb-1">Alta de Contrato</h1>
+                <p class="text-muted mb-4">Registro manual de un contrato asociado a un cliente existente.</p>
+
+                <% if (!puedeEditar) { %>
+                    <div class="alert alert-warning mb-4">
+                        Solo el Oficial de Cumplimiento, Administrador o Empleado pueden registrar contratos. Estás en modo lectura.
+                    </div>
+                <% } %>
+
+                <% if (locals.error) { %>
+                    <div class="alert alert-danger mb-4"><%= error %></div>
+                <% } %>
+                <% if (locals.exito) { %>
+                    <div class="alert alert-success mb-4"><%= exito %></div>
+                <% } %>
+
+                <form action="/contratos/alta" method="POST">
+
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Cliente</h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold">
+                                    Buscar Cliente <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input type="text" id="inputBusquedaCliente" class="form-control"
+                                        placeholder="Buscar por nombre, RFC o ID..."
+                                        <%= !puedeEditar ? 'disabled' : '' %>>
+                                    <button type="button" id="btnBuscarCliente" class="btn btn-outline-secondary"
+                                        <%= !puedeEditar ? 'disabled' : '' %>>Buscar</button>
+                                </div>
+
+                                <input type="hidden" id="inputClienteId" name="cliente_id"
+                                    value="<%= valores ? valores.cliente_id : '' %>" required>
+                                <div id="clienteStatus" class="form-text mt-1"></div>
+
+                                <ul id="listaResultadosCliente" class="list-group mt-1" style="display:none; position:absolute; z-index:1000; width:100%; max-height:220px; overflow-y:auto;"></ul>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold">Nombre del Cliente</label>
+                                <input type="text" id="nombreClienteDisplay" class="form-control"
+                                    placeholder="Se completará al seleccionar el cliente" disabled>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Datos del Contrato</h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold">Descripción</label>
+                                <input type="text" name="descripcion" class="form-control" placeholder="Ej. Crédito personal agosto 2026" maxlength="150"
+                                    value="<%= valores ? valores.descripcion : '' %>"
+                                    <%= !puedeEditar ? 'disabled' : '' %> >
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Canal <span class="text-danger">*</span>
+                                </label>
+                                <select name="canal" class="form-select" <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.canales.forEach(c => { %>
+                                        <option value="<%= c.id_opcion %>"
+                                            <%= valores && valores.canal == c.id_opcion ? 'selected' : '' %>>
+                                            <%= c.opciones %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Producto <span class="text-danger">*</span>
+                                </label>
+                                <select name="producto" class="form-select" <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.productos.forEach(p => { %>
+                                        <option value="<%= p.id_opcion %>"
+                                            <%= valores && valores.producto == p.id_opcion ? 'selected' : '' %>>
+                                            <%= p.opciones %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Finalidad del Crédito <span class="text-danger">*</span>
+                                </label>
+                                <select name="finalidad_credito" class="form-select" <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.finalidades.forEach(f => { %>
+                                        <option value="<%= f.id_opcion %>"
+                                            <%= valores && valores.finalidad_credito == f.id_opcion ? 'selected' : '' %>>
+                                            <%= f.opciones %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Frecuencia de Pago <span class="text-danger">*</span>
+                                </label>
+                                <select name="frecuencia_pago" class="form-select" <%= !puedeEditar ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.frecuenciasPago.forEach(fp => { %>
+                                        <option value="<%= fp.id_opcion %>"
+                                            <%= valores && valores.frecuencia_pago == fp.id_opcion ? 'selected' : '' %>>
+                                            <%= fp.opciones %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Plazos y Monto</h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    Fecha de Inicio <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" name="fecha_inicio" class="form-control"
+                                    value="<%= valores ? valores.fecha_inicio : '' %>"
+                                    <%= !puedeEditar ? 'disabled' : '' %> required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    Fecha de Finalización <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" name="fecha_finalizacion" class="form-control"
+                                    value="<%= valores ? valores.fecha_finalizacion : '' %>"
+                                    <%= !puedeEditar ? 'disabled' : '' %> required >
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    Monto Total de Pago (MXN) <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" name="monto_total_pago" class="form-control" placeholder="Ej. 50000.00" min="0.01" step="0.01"
+                                    value="<%= valores ? valores.monto_total_pago : '' %>"
+                                    <%= !puedeEditar ? 'disabled' : '' %> required>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <% if (puedeEditar) { %>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn-expediente px-5">Registrar Contrato</button>
+                        </div>
+                    <% } %>
+
+                </form>
+
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+
+        <script>
+            const puedeEditar = '<%= puedeEditar %>' === 'true';
+
+            const inputBusqueda = document.getElementById('inputBusquedaCliente');
+            const btnBuscarCliente = document.getElementById('btnBuscarCliente');
+            const inputClienteId = document.getElementById('inputClienteId');
+            const clienteStatus = document.getElementById('clienteStatus');
+            const nombreDisplay = document.getElementById('nombreClienteDisplay');
+            const listaResultados = document.getElementById('listaResultadosCliente');
+
+            async function buscarClientes() {
+                const termino = inputBusqueda.value.trim();
+                if (termino.length < 1) {
+                    clienteStatus.textContent = 'Escribe al menos 1 caracter.';
+                    clienteStatus.className = 'form-text mt-1 text-muted';
+                    return;
+                }
+
+                clienteStatus.textContent = 'Buscando...';
+                clienteStatus.className = 'form-text mt-1 text-muted';
+                listaResultados.innerHTML = '';
+                listaResultados.style.display = 'none';
+
+                try {
+                    const resp = await fetch(`/clientes/buscar?q=${encodeURIComponent(termino)}`);
+                    const json = await resp.json();
+
+                    if (!json.ok || json.clientes.length === 0) {
+                        clienteStatus.textContent = 'No se encontraron clientes.';
+                        clienteStatus.className = 'form-text mt-1 text-warning';
+                        return;
+                    }
+
+                    json.clientes.forEach(c => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item list-group-item-action';
+                        li.style.cursor = 'pointer';
+                        li.textContent = `${c.razon_social} — RFC: ${c.rfc || 'N/A'} — ID: ${c.cliente_id}`;
+                        li.addEventListener('click', () => seleccionarCliente(c));
+                        listaResultados.appendChild(li);
+                    });
+
+                    listaResultados.style.display = 'block';
+                    clienteStatus.textContent = '';
+                } catch (err) {
+                    clienteStatus.textContent = 'Error al buscar clientes.';
+                    clienteStatus.className = 'form-text mt-1 text-danger';
+                }
+            }
+
+            async function seleccionarCliente(c) {
+                inputClienteId.value = c.cliente_id;
+                nombreDisplay.value = c.razon_social;
+                inputBusqueda.value = `${c.razon_social} (${c.rfc || 'Sin RFC'})`;
+                listaResultados.style.display = 'none';
+                clienteStatus.textContent = `✓ Cliente seleccionado: ID ${c.cliente_id}`;
+                clienteStatus.className = 'form-text mt-1 text-success';
+            }
+
+            if (puedeEditar) {
+                btnBuscarCliente.addEventListener('click', buscarClientes);
+                inputBusqueda.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); buscarClientes(); }
+                });
+            }
+
+            document.addEventListener('click', e => {
+                if (!listaResultados.contains(e.target) && e.target !== inputBusqueda) {
+                    listaResultados.style.display = 'none';
+                }
+            });
+        </script>
+    </body>
+</html>

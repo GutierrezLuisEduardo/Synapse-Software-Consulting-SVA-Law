@@ -1,0 +1,14 @@
+.navbar {
+    background: rgb(50, 45, 45);
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer {
+    margin-top: 50px;
+    text-align: center;
+    padding: 20px;
+}

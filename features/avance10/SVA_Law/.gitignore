@@ -1,0 +1,8 @@
+node_modules
+.env
+only_install_dependencies.sh
+install_and_init.sh
+listar_archivos.sh
+desplegar_dirstree.sh
+salida.txt
+package-lock.json

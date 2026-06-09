@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/clientes.css">
+    </head>
+    <body>
+        <%- include('../partials/navbar') %>
+
+        <div class="main-content">
+            <div class="container py-5">
+
+                <div class="clientes-header mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h1 class="page-title mb-1">Operaciones</h1>
+                        <span class="text-muted" style="font-size:0.9rem;">
+                            Mostrando hasta 50 registros por página
+                        </span>
+                    </div>
+                    <a href="/operaciones/exportar<%= queryFiltros ? '?' + queryFiltros : '' %>"
+                       class="btn btn-expediente btn-sm"
+                       data-testid="btn-exportar-historial">
+                        Exportar historial (.txt)
+                    </a>
+                </div>
+
+                <!-- ===== Filtros ===== -->
+                <form method="GET" action="/operaciones" class="mb-4" data-testid="form-filtros-operaciones">
+                    <div class="row g-3">
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small mb-1">Origen de recursos</label>
+                            <select name="origen_recursos" class="form-select form-select-sm" data-testid="filtro-origen-recursos">
+                                <option value="">Todos</option>
+                                <% catalogos.origenRecursos.forEach(op => { %>
+                                    <option value="<%= op.id_opcion %>" <%= filtros.origen_recursos == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small mb-1">Origen de operación</label>
+                            <select name="origen_operacion" class="form-select form-select-sm" data-testid="filtro-origen-operacion">
+                                <option value="">Todos</option>
+                                <% catalogos.origenOperacion.forEach(op => { %>
+                                    <option value="<%= op.id_opcion %>" <%= filtros.origen_operacion == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small mb-1">Destino de operación</label>
+                            <select name="destino_operacion" class="form-select form-select-sm" data-testid="filtro-destino-operacion">
+                                <option value="">Todos</option>
+                                <% catalogos.destinoOperacion.forEach(op => { %>
+                                    <option value="<%= op.id_opcion %>" <%= filtros.destino_operacion == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small mb-1">Instrumento monetario</label>
+                            <select name="instrumento_monetario" class="form-select form-select-sm" data-testid="filtro-instrumento">
+                                <option value="">Todos</option>
+                                <% catalogos.instrumentoMonetario.forEach(op => { %>
+                                    <option value="<%= op.id_opcion %>" <%= filtros.instrumento_monetario == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small mb-1">Incremento de monto vs anterior</label>
+                            <select name="incremento_monto_vs_anterior" class="form-select form-select-sm" data-testid="filtro-incremento">
+                                <option value="">Todos</option>
+                                <% catalogos.incrementoMonto.forEach(op => { %>
+                                    <option value="<%= op.id_opcion %>" <%= filtros.incremento_monto_vs_anterior == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small mb-1">Pago excedido</label>
+                            <select name="pago_excedido" class="form-select form-select-sm" data-testid="filtro-pago-excedido">
+                                <option value="">Todos</option>
+                                <% catalogos.pagoExcedido.forEach(op => { %>
+                                    <option value="<%= op.id_opcion %>" <%= filtros.pago_excedido == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small mb-1">Monto mínimo</label>
+                            <input type="number" step="0.01" min="0" name="monto_min"
+                                   value="<%= filtros.monto_min %>"
+                                   class="form-control form-control-sm"
+                                   placeholder="0.00"
+                                   data-testid="filtro-monto-min">
+                        </div>
+
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label small mb-1">Monto máximo</label>
+                            <input type="number" step="0.01" min="0" name="monto_max"
+                                   value="<%= filtros.monto_max %>"
+                                   class="form-control form-control-sm"
+                                   placeholder="Sin límite"
+                                   data-testid="filtro-monto-max">
+                        </div>
+
+                        <div class="col-12 d-flex gap-2">
+                            <button type="submit"
+                                    class="btn btn-expediente btn-sm"
+                                    data-testid="btn-aplicar-filtros">
+                                Aplicar filtros
+                            </button>
+                            <a href="/operaciones"
+                               class="btn btn-outline-secondary btn-sm"
+                               data-testid="btn-limpiar-filtros">
+                                Limpiar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="table-responsive tabla-container">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID Operación</th>
+                                <th>ID Contrato</th>
+                                <th>Cliente</th>
+                                <th>Monto</th>
+                                <th>Instrumento</th>
+                                <th>Origen Recursos</th>
+                                <th>Pago Excedido</th>
+                                <th>Fecha</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (operaciones.length === 0) { %>
+                                <tr>
+                                    <td colspan="9" class="text-center py-4">
+                                        No se encontraron operaciones con los filtros aplicados
+                                    </td>
+                                </tr>
+                            <% } %>
+                            <% operaciones.forEach(op => { %>
+                                <tr class="fila-cliente"
+                                    onclick="window.location='/operaciones/<%= op.operacion_id %>'">
+                                    <td><%= op.operacion_id %></td>
+                                    <td><%= op.contrato_id %></td>
+                                    <td><%= op.nombre_cliente || '—' %></td>
+                                    <td>
+                                        $<%= parseFloat(op.monto).toLocaleString('es-MX', {
+                                            minimumFractionDigits: 2
+                                        }) %>
+                                    </td>
+                                    <td><%= op.instrumento_monetario || '—' %></td>
+                                    <td><%= op.origen_recursos || '—' %></td>
+                                    <td><%= op.pago_excedido || '—' %></td>
+                                    <td>
+                                        <%= new Date(op.emision_operacion).toLocaleDateString('es-MX') %>
+                                    </td>
+                                    <td>
+                                        <span class="badge-expediente">Ver detalle</span>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination-container mt-4">
+                    <div class="d-flex gap-2 align-items-center">
+                        <% if (currentPage > 1) { %>
+                            <a class="btn btn-pagination"
+                               href="/operaciones?page=<%= currentPage - 1 %><%= queryFiltros ? '&' + queryFiltros : '' %>">
+                               Anterior
+                            </a>
+                        <% } %>
+                        <span class="page-indicator">
+                            Página <%= currentPage %> de <%= totalPages || 1 %>
+                        </span>
+                        <% if (currentPage < totalPages) { %>
+                            <a class="btn btn-pagination"
+                               href="/operaciones?page=<%= currentPage + 1 %><%= queryFiltros ? '&' + queryFiltros : '' %>">
+                               Siguiente
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+    </body>
+</html>

@@ -1,0 +1,72 @@
+:root {
+    --white: #ffffff;
+    --black: #1a1a16;
+    --light: #f1f1f1;
+    --red: #ce361d;
+}
+
+.exp-card {
+    background-color: var(--white);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.doc-drop-zone {
+    border: 2px dashed rgba(26, 26, 22, 0.3);
+    border-radius: 12px;
+    padding: 40px 24px;
+    text-align: center;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    cursor: default;
+}
+
+.doc-drop-zone.doc-drop-active {
+    border-color: var(--red);
+    background-color: rgba(206, 54, 29, 0.04);
+}
+
+.doc-drop-text {
+    color: rgba(26, 26, 22, 0.55);
+    font-size: 0.95rem;
+}
+
+.btn-doc-select {
+    background-color: var(--black);
+    color: var(--white);
+    border: none;
+    padding: 10px 24px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-doc-select:hover {
+    background-color: #333330;
+}
+
+.doc-file-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--black);
+}
+
+.doc-remove-btn {
+    background: none;
+    border: none;
+    color: var(--red);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.doc-remove-btn:hover {
+    color: #a82a16;
+}

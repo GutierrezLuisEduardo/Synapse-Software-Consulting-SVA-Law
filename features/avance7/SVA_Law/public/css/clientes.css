@@ -1,0 +1,208 @@
+:root {
+    --white: #ffffff;
+    --black: #1a1a16;
+    --light: #f1f1f1;
+    --red: #ce361d;
+}
+
+body {
+    background-color: var(--light);
+    color: var(--black);
+}
+
+.page-title {
+    font-weight: 700;
+    color: var(--black);
+}
+
+.clientes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.buscador {
+    width: 300px;
+    border: 2px solid var(--black);
+    border-radius: 10px;
+}
+
+.tabla-container {
+    background-color: var(--white);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.table thead {
+    background-color: var(--black);
+    color: var(--white);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(206, 54, 29, 0.08);
+}
+
+.btn-expediente,
+.btn-pagination {
+    background-color: var(--red);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-expediente:focus,
+.btn-pagination:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(206, 54, 29, 0.35);
+    color: var(--white);
+}
+
+.btn-expediente:hover,
+.btn-pagination:hover {
+    background-color: #a82a16;
+    color: var(--white);
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+}
+
+.page-indicator {
+    font-weight: 600;
+}
+
+.expediente-card {
+    background-color: var(--white);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.cliente-info p {
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.fila-cliente {
+    cursor: pointer;
+}
+
+.badge-expediente {
+    background-color: var(--red);
+    color: var(--white);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100vh;
+    background-color: var(--black);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 16px;
+    z-index: 100;
+}
+
+.sidebar-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0 0 24px 0;
+}
+
+.logo-link {
+    color: var(--white);
+    text-decoration: none;
+}
+
+.logo-link:hover {
+    color: var(--red);
+}
+
+.sidebar-user {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0 0 4px 0;
+}
+
+.user-role {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    margin: 0;
+}
+
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-links a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: 0.2s ease;
+}
+
+.sidebar-links a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: var(--white);
+}
+
+.logout-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--red);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s ease;
+}
+
+.logout-btn:hover {
+    background-color: #a82a16;
+}
+
+.main-content {
+    margin-left: 220px;
+    min-height: 100vh;
+}
+
+.footer {
+    margin-left: 220px;
+    text-align: center;
+    padding: 16px;
+    font-size: 0.85rem;
+    color: rgba(0,0,0,0.4);
+}
+
+.sidebar-links a.active {
+    background-color: var(--red);
+    color: var(--white);
+}

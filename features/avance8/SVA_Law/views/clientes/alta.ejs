@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/clientes.css">
+    </head>
+    <body>
+        <%- include('../partials/navbar') %>
+
+        <div class="main-content">
+            <div class="container py-5">
+
+                <h1 class="page-title mb-1">Alta de Cliente</h1>
+
+                <% if (!esEmpleado) { %>
+                    <div class="alert alert-warning mb-4">
+                        Solo el Empleado de SOFOM puede registrar clientes. Estás en modo lectura.
+                    </div>
+                <% } %>
+
+                <% if (error) { %>
+                    <div class="alert alert-danger mb-4"><%= error %></div>
+                <% } %>
+                <% if (exito) { %>
+                    <div class="alert alert-success mb-4"><%= exito %></div>
+                <% } %>
+
+                <form action="/clientes/alta" method="POST">
+
+                    <%# ── SECCIÓN 1: DATOS GENERALES ── %>
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Datos Generales</h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label class="form-label">Tipo de Persona <span class="text-danger">*</span></label>
+                                <select name="id_tipo_persona" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.tiposPersona.forEach(tp => { %>
+                                        <option value="<%= tp.tipo_persona_id %>"><%= tp.descripcion %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label class="form-label">Nombre / Razón Social <span class="text-danger">*</span></label>
+                                <input type="text" name="razon_social" class="form-control"
+                                    placeholder="Nombre completo o razón social"
+                                    <%= !esEmpleado ? 'disabled' : '' %> required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Teléfono <span class="text-danger">*</span></label>
+                                <input type="text" name="telefono" class="form-control"
+                                    placeholder="10 dígitos"
+                                    <%= !esEmpleado ? 'disabled' : '' %> required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+                                <input type="email" name="correo_electronico" class="form-control"
+                                    placeholder="correo@ejemplo.com"
+                                    <%= !esEmpleado ? 'disabled' : '' %> required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">CLABE <span class="text-danger">*</span></label>
+                                <input type="text" name="clabe" class="form-control"
+                                    placeholder="18 dígitos" maxlength="18"
+                                    <%= !esEmpleado ? 'disabled' : '' %> required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Serie e.firma <span class="text-danger">*</span></label>
+                                <input type="text" name="serie_efirma" class="form-control"
+                                    placeholder="Serie del certificado"
+                                    <%= !esEmpleado ? 'disabled' : '' %> required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Geolocalización <span class="text-danger">*</span></label>
+                                <input type="text" name="geolocalizacion" class="form-control"
+                                    placeholder="lat,lng (ej. 20.5881,-100.3888)"
+                                    <%= !esEmpleado ? 'disabled' : '' %> required>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <%# ── SECCIÓN 2: DATOS PERSONA FÍSICA ── %>
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Datos Persona Física <span class="text-muted fs-6 fw-normal">(dejar en blanco si es Persona Moral)</span></h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label class="form-label">CURP</label>
+                                <input type="text" name="curp" class="form-control"
+                                    placeholder="18 caracteres" maxlength="18"
+                                    <%= !esEmpleado ? 'disabled' : '' %>>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">RFC</label>
+                                <input type="text" name="rfc" class="form-control"
+                                    placeholder="RFC" maxlength="15"
+                                    <%= !esEmpleado ? 'disabled' : '' %>>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Género</label>
+                                <select name="genero" class="form-select" <%= !esEmpleado ? 'disabled' : '' %>>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Femenino">Femenino</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Fecha de Nacimiento</label>
+                                <input type="date" name="fecha_nacimiento" class="form-control"
+                                    <%= !esEmpleado ? 'disabled' : '' %>>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">País de Nacimiento</label>
+                                <input type="text" name="pais_nacimiento" class="form-control"
+                                    placeholder="País"
+                                    <%= !esEmpleado ? 'disabled' : '' %>>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Entidad Federativa de Nacimiento</label>
+                                <input type="text" name="entidad_federativa_nacimiento" class="form-control"
+                                    placeholder="Estado"
+                                    <%= !esEmpleado ? 'disabled' : '' %>>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <%# ── SECCIÓN 3: DATOS PERSONA MORAL ── %>
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Datos Persona Moral <span class="text-muted fs-6 fw-normal">(dejar en blanco si es Persona Física)</span></h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre del Apoderado Legal</label>
+                                <input type="text" name="nombre_apoderado_legal" class="form-control"
+                                    placeholder="Nombre completo del apoderado"
+                                    <%= !esEmpleado ? 'disabled' : '' %>>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Fecha de Constitución</label>
+                                <input type="date" name="fecha_constitucion" class="form-control"
+                                    <%= !esEmpleado ? 'disabled' : '' %>>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <%# ── SECCIÓN 4: CATÁLOGOS DE PERFILAMIENTO ── %>
+                    <div class="exp-card mb-4">
+                        <h2 class="exp-section-title">Perfilamiento PLD/FT</h2>
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label class="form-label">País de Origen <span class="text-danger">*</span></label>
+                                <select name="pais_origen" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.paisOrigen.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Nacionalidad <span class="text-danger">*</span></label>
+                                <select name="nacionalidad" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.nacionalidad.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Domicilio <span class="text-danger">*</span></label>
+                                <select name="domicilio" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.domicilio.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Actividad Económica / Laboral <span class="text-danger">*</span></label>
+                                <select name="actividad_economica" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.actividadEconomica.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Vinculado con el Grupo <span class="text-danger">*</span></label>
+                                <select name="vinculado_con_grupo" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.vinculadoGrupo.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Edad <span class="text-danger">*</span></label>
+                                <select name="edad" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.edad.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Estado Civil <span class="text-danger">*</span></label>
+                                <select name="estado_civil" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.estadoCivil.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Dependientes Económicos <span class="text-danger">*</span></label>
+                                <select name="dependientes_economicos" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.dependientesEconomicos.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Número de Hijos <span class="text-danger">*</span></label>
+                                <select name="numero_hijos" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.numeroHijos.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Nivel de Estudios <span class="text-danger">*</span></label>
+                                <select name="nivel_estudios" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.nivelEstudios.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Tipo de Vivienda <span class="text-danger">*</span></label>
+                                <select name="tipo_vivienda" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.tipoVivienda.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Tipo de Empleo <span class="text-danger">*</span></label>
+                                <select name="tipo_empleo" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.tipoEmpleo.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Ingresos Mensuales <span class="text-danger">*</span></label>
+                                <select name="ingresos_mensuales" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.ingresosMensuales.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Valor Patrimonio <span class="text-danger">*</span></label>
+                                <select name="valor_patrimonio" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.valorPatrimonio.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">¿Pertenece a Campaña o Partido Político? <span class="text-danger">*</span></label>
+                                <select name="pertenece_partido_politico" class="form-select" <%= !esEmpleado ? 'disabled' : '' %> required>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.pertenecePartido.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">PEPS</label>
+                                <select name="peps" class="form-select" <%= !esEmpleado ? 'disabled' : '' %>>
+                                    <option value="">Seleccionar...</option>
+                                    <% catalogos.peps.forEach(op => { %>
+                                        <option value="<%= op.valores %>"><%= op.opciones %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <% if (esEmpleado) { %>
+                        <div class="d-flex justify-content-end gap-3 mb-5">
+                            <a href="/clientes" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-expediente px-5">Registrar Cliente</button>
+                        </div>
+                    <% } %>
+
+                </form>
+
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+    </body>
+</html>

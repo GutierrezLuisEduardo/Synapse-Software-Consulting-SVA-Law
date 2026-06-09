@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Crear usuario</title>
+    </head>
+    <body>
+        <h1>Crear usuario</h1>
+        <form action="/users/create" method="POST">
+            <input type="text" name="nombre" placeholder="Nombre" required>
+            <input type="email" name="correo_electronico" placeholder="Correo" required>
+            <input type="password" name="contrasena" placeholder="Contraseña" required>
+
+            <select name="rol_id">
+                <option value="1">Administrador</option>
+                <option value="2">Oficial de cumplimiento</option>
+                <option value="3">Empleado</option>
+                <option value="4">Auditor</option>
+            </select>
+
+            <select name="sofom_id">
+                <option value="1">Financiera Integral del Bajío</option>
+                <option value="2">Crédito Empresarial del Centro</option>
+            </select>
+
+            <button type="submit">Crear usuario</button>
+        </form>
+    </body>
+</html>

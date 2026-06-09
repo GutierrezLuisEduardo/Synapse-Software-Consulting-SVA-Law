@@ -1,0 +1,29 @@
+body {
+    background: #f4f4f4;
+}
+
+.login-container {
+    width: 300px;
+    margin: 100px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+}
+
+
+.error-message {    
+    background: #ffdede;
+    color: red;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+input,
+button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}

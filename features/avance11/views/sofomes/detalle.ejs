@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('../partials/head') %>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/clientes.css">
+        <link rel="stylesheet" href="/css/expediente.css">
+    </head>
+    <body>
+        <%- include('../partials/navbar') %>
+
+        <div class="main-content">
+            <div class="container py-5">
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <a href="/sofomes" class="btn btn-expediente btn-sm">Regresar</a>
+                    <h1 class="page-title mb-0">Detalle de SOFOM</h1>
+                </div>
+
+                <div class="exp-card mb-4">
+                    <h2 class="exp-section-title">Información General</h2>
+                    <div class="datos-grid">
+                        <div class="dato-item">
+                            <span class="dato-label">ID</span>
+                            <span class="dato-valor"><%= sofom.sofom_id %></span>
+                        </div>
+                        <div class="dato-item">
+                            <span class="dato-label">Razón Social</span>
+                            <span class="dato-valor"><%= sofom.razon_social %></span>
+                        </div>
+                        <div class="dato-item">
+                            <span class="dato-label">Tipo de Entidad</span>
+                            <span class="dato-valor"><%= sofom.tipo_entidad || sofom.tipo_entidad_id %></span>
+                        </div>
+                        <div class="dato-item">
+                            <span class="dato-label">Canal Privado</span>
+                            <span class="dato-valor"><%= sofom.canal_privado || '—' %></span>
+                        </div>
+                        <div class="dato-item">
+                            <span class="dato-label">Estatus</span>
+                            <span class="dato-valor">
+                                <span class="badge-estatus <%= sofom.estatus ? 'activo' : 'inactivo' %>">
+                                    <%= sofom.estatus ? 'Activa' : 'Inactiva' %>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="dato-item">
+                            <span class="dato-label">Fecha de Alta</span>
+                            <span class="dato-valor"><%= new Date(sofom.fecha_creacion).toLocaleDateString('es-MX') %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exp-card">
+                    <h2 class="exp-section-title">Usuarios Registrados</h2>
+                    <% if (usuarios.length === 0) { %>
+                        <p class="sin-datos">Esta SOFOM no tiene usuarios registrados.</p>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="tabla-exp">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>Rol</th>
+                                        <th>Estatus</th>
+                                        <th>Fecha Alta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% usuarios.forEach(u => { %>
+                                        <tr>
+                                            <td><%= u.usuario_id %></td>
+                                            <td><%= u.nombre %></td>
+                                            <td><%= u.correo_electronico %></td>
+                                            <td><%= u.rol %></td>
+                                            <td>
+                                                <span class="badge-estatus <%= u.estatus ? 'activo' : 'inactivo' %>">
+                                                    <%= u.estatus ? 'Activo' : 'Inactivo' %>
+                                                </span>
+                                            </td>
+                                            <td><%= new Date(u.fecha_creacion).toLocaleDateString('es-MX') %></td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+                </div>
+
+            </div>
+        </div>
+
+        <%- include('../partials/footer') %>
+    </body>
+</html>
