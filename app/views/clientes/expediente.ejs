@@ -33,278 +33,234 @@
 
                 <div id="tab-info" class="exp-tab-pane active">
 
-                    <div class="row g-4 mb-4">
-                        <div class="col-lg-7">
-                            <div class="exp-card h-100">
-                                <form action="/clientes/<%= cliente.cliente_id %>/actualizar-perfil" method="POST">
+                    <div class="exp-card h-100">
+                        <form action="/clientes/<%= cliente.cliente_id %>/actualizar-perfil" method="POST">
 
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h2 class="exp-section-title mb-0">Datos Personales</h2>
-                                        <button type="submit" class="btn btn-expediente btn-sm"
-                                                data-testid="btn-guardar-perfil">
-                                            Guardar cambios
-                                        </button>
-                                    </div>
-
-                                    <div class="datos-grid">
-                                        <div class="dato-item">
-                                            <span class="dato-label">ID</span>
-                                            <span class="dato-valor"><%= cliente.cliente_id %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">Nombre / Razón Social</span>
-                                            <span class="dato-valor"><%= cliente.razon_social %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">Tipo de Persona</span>
-                                            <span class="dato-valor"><%= cliente.tipo_persona || '—' %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">Teléfono</span>
-                                            <span class="dato-valor"><%= cliente.telefono || '—' %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">Correo electrónico</span>
-                                            <span class="dato-valor"><%= cliente.correo_electronico || '—' %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">CURP</span>
-                                            <span class="dato-valor"><%= cliente.curp || '—' %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">RFC</span>
-                                            <span class="dato-valor"><%= cliente.rfc || '—' %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">Género</span>
-                                            <span class="dato-valor"><%= cliente.genero || '—' %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">Fecha de nacimiento</span>
-                                            <span class="dato-valor">
-                                                <%= cliente.fecha_nacimiento ? new Date(cliente.fecha_nacimiento).toLocaleDateString('es-MX') : '—' %>
-                                            </span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">SOFOM</span>
-                                            <span class="dato-valor"><%= cliente.sofom_nombre %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">Alerta histórica</span>
-                                            <span class="dato-valor"><%= cliente.estatus_alerta_historica ? 'Sí' : 'No' %></span>
-                                        </div>
-                                        <div class="dato-item">
-                                            <span class="dato-label">Ha sido PEPS</span>
-                                            <span class="dato-valor"><%= cliente.ha_sido_peps ? 'Sí' : 'No' %></span>
-                                        </div>
-
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">País de origen</span>
-                                            <select name="pais_origen" class="form-select form-select-sm" data-testid="select-pais-origen">
-                                                <% catalogos.paisOrigen.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.pais_origen_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Nacionalidad</span>
-                                            <select name="nacionalidad" class="form-select form-select-sm" data-testid="select-nacionalidad">
-                                                <% catalogos.nacionalidad.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.nacionalidad_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Domicilio</span>
-                                            <select name="domicilio" class="form-select form-select-sm" data-testid="select-domicilio">
-                                                <% catalogos.domicilio.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.domicilio_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Actividad Económica</span>
-                                            <select name="actividad_economica" class="form-select form-select-sm" data-testid="select-actividad-economica">
-                                                <% catalogos.actividadEconomica.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.actividad_economica_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Vinculado con grupo</span>
-                                            <select name="vinculado_con_grupo" class="form-select form-select-sm" data-testid="select-vinculado-grupo">
-                                                <% catalogos.vinculadoGrupo.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.vinculado_con_grupo_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Estado civil</span>
-                                            <select name="estado_civil" class="form-select form-select-sm" data-testid="select-estado-civil">
-                                                <% catalogos.estadoCivil.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.estado_civil_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Dependientes económicos</span>
-                                            <select name="dependientes_economicos" class="form-select form-select-sm" data-testid="select-dependientes">
-                                                <% catalogos.dependientesEconomicos.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.dependientes_economicos_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Número de hijos</span>
-                                            <select name="numero_hijos" class="form-select form-select-sm" data-testid="select-numero-hijos">
-                                                <% catalogos.numeroHijos.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.numero_hijos_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Nivel de estudios</span>
-                                            <select name="nivel_estudios" class="form-select form-select-sm" data-testid="select-nivel-estudios">
-                                                <% catalogos.nivelEstudios.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.nivel_estudios_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Tipo de vivienda</span>
-                                            <select name="tipo_vivienda" class="form-select form-select-sm" data-testid="select-tipo-vivienda">
-                                                <% catalogos.tipoVivienda.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.tipo_vivienda_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Tipo de empleo</span>
-                                            <select name="tipo_empleo" class="form-select form-select-sm" data-testid="select-tipo-empleo">
-                                                <% catalogos.tipoEmpleo.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.tipo_empleo_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Ingresos mensuales</span>
-                                            <select name="ingresos_mensuales" class="form-select form-select-sm" data-testid="select-ingresos">
-                                                <% catalogos.ingresosMensuales.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.ingresos_mensuales_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Valor del patrimonio</span>
-                                            <select name="valor_patrimonio" class="form-select form-select-sm" data-testid="select-valor-patrimonio">
-                                                <% catalogos.valorPatrimonio.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.valor_patrimonio_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Pertenece a partido político</span>
-                                            <select name="pertenece_partido_politico" class="form-select form-select-sm" data-testid="select-partido">
-                                                <% catalogos.pertenecePartido.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.pertenece_partido_politico_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">PEPS</span>
-                                            <select name="peps" class="form-select form-select-sm" data-testid="select-peps">
-                                                <option value="">— Sin asignar —</option>
-                                                <% catalogos.peps.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.peps_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-
-                                        <div class="dato-item">
-                                            <span class="dato-label">Rango de edad</span>
-                                            <select name="edad" class="form-select form-select-sm" data-testid="select-edad">
-                                                <option value="">— Sin asignar —</option>
-                                                <% catalogos.edad.forEach(op => { %>
-                                                    <option value="<%= op.id_opcion %>" <%= cliente.edad_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
-                                                <% }) %>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </form>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h2 class="exp-section-title mb-0">Datos Personales</h2>
+                                <button type="submit" class="btn btn-expediente btn-sm"
+                                        data-testid="btn-guardar-perfil">
+                                    Guardar cambios
+                                </button>
                             </div>
 
-                        </div>
+                            <div class="datos-grid">
+                                <div class="dato-item">
+                                    <span class="dato-label">ID</span>
+                                    <span class="dato-valor"><%= cliente.cliente_id %></span>
+                                </div>
 
-                        <div class="col-lg-5">
-                            <div class="exp-card h-100">
-                                <h2 class="exp-section-title">Riesgo Final</h2>
-                                <table class="tabla-riesgo">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Valor</th>
-                                            <th>Ponderación</th>
-                                            <th>Puntaje</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Clasificación de Cliente</td>
-                                            <td><%= cliente.clasif_cliente != null ? Number(cliente.clasif_cliente).toFixed(2) : '—' %></td>
-                                            <td><%= ponderacionCliente != null ? (ponderacionCliente * 100).toFixed(0) + '%' : '30%' %></td>
-                                            <td><%= (cliente.clasif_cliente != null && ponderacionCliente != null)
-                                                    ? (Number(cliente.clasif_cliente) * ponderacionCliente).toFixed(2)
-                                                    : '—' %></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Clasificación de Monitoreo</td>
-                                            <td><%= cliente.clasif_monitoreo != null ? Number(cliente.clasif_monitoreo).toFixed(2) : '—' %></td>
-                                            <td><%= ponderacionMonitoreo != null ? (ponderacionMonitoreo * 100).toFixed(0) + '%' : '70%' %></td>
-                                            <td><%= (cliente.clasif_monitoreo != null && ponderacionMonitoreo != null)
-                                                    ? (Number(cliente.clasif_monitoreo) * ponderacionMonitoreo).toFixed(2)
-                                                    : '—' %></td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr class="fila-total">
-                                            <td colspan="3" class="text-end">Valor Total</td>
-                                            <td class="celda-total">
-                                                <%= cliente.puntaje != null ? Number(cliente.puntaje).toFixed(2) : '—' %>
-                                            </td>
-                                        </tr>
-                                        <tr class="fila-riesgo">
-                                            <td colspan="3" class="text-end">RIESGO DETERMINADO</td>
-                                            <td class="celda-riesgo
-                                                <%= cliente.riesgo_final === 1 ? 'riesgo-bajo'
-                                                : cliente.riesgo_final === 2 ? 'riesgo-medio'
-                                                : cliente.riesgo_final === 3 ? 'riesgo-alto'
-                                                : '' %>">
-                                                <%= cliente.riesgo_final === 1 ? 'BAJO'
-                                                : cliente.riesgo_final === 2 ? 'MEDIO'
-                                                : cliente.riesgo_final === 3 ? 'ALTO'
-                                                : '—' %>
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                                <div class="dato-item">
+                                    <span class="dato-label">Puntaje de Riesgo</span>
+                                    <span class="dato-valor celda-riesgo
+                                        <%= cliente.riesgo_final === 1 ? 'riesgo-bajo'
+                                        : cliente.riesgo_final === 2 ? 'riesgo-medio'
+                                        : cliente.riesgo_final === 3 ? 'riesgo-alto'
+                                        : '' %>">
+                                        <%= cliente.riesgo_final === 1 ? 'BAJO'
+                                        : cliente.riesgo_final === 2 ? 'MEDIO'
+                                        : cliente.riesgo_final === 3 ? 'ALTO'
+                                        : '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Nombre / Razón Social</span>
+                                    <span class="dato-valor"><%= cliente.razon_social %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Tipo de Persona</span>
+                                    <span class="dato-valor"><%= cliente.tipo_persona || '—' %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Teléfono</span>
+                                    <span class="dato-valor"><%= cliente.telefono || '—' %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Correo electrónico</span>
+                                    <span class="dato-valor"><%= cliente.correo_electronico || '—' %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">CURP</span>
+                                    <span class="dato-valor"><%= cliente.curp || '—' %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">RFC</span>
+                                    <span class="dato-valor"><%= cliente.rfc || '—' %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Género</span>
+                                    <span class="dato-valor"><%= cliente.genero || '—' %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Fecha de nacimiento</span>
+                                    <span class="dato-valor">
+                                        <%= cliente.fecha_nacimiento ? new Date(cliente.fecha_nacimiento).toLocaleDateString('es-MX') : '—' %>
+                                    </span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">SOFOM</span>
+                                    <span class="dato-valor"><%= cliente.sofom_nombre %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Alerta histórica</span>
+                                    <span class="dato-valor"><%= cliente.estatus_alerta_historica ? 'Sí' : 'No' %></span>
+                                </div>
+                                <div class="dato-item">
+                                    <span class="dato-label">Ha sido PEPS</span>
+                                    <span class="dato-valor"><%= cliente.ha_sido_peps ? 'Sí' : 'No' %></span>
+                                </div>
+
+
+                                <div class="dato-item">
+                                    <span class="dato-label">País de origen</span>
+                                    <select name="pais_origen" class="form-select form-select-sm" data-testid="select-pais-origen">
+                                        <% catalogos.paisOrigen.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.pais_origen_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Nacionalidad</span>
+                                    <select name="nacionalidad" class="form-select form-select-sm" data-testid="select-nacionalidad">
+                                        <% catalogos.nacionalidad.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.nacionalidad_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Domicilio</span>
+                                    <select name="domicilio" class="form-select form-select-sm" data-testid="select-domicilio">
+                                        <% catalogos.domicilio.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.domicilio_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Actividad Económica</span>
+                                    <select name="actividad_economica" class="form-select form-select-sm" data-testid="select-actividad-economica">
+                                        <% catalogos.actividadEconomica.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.actividad_economica_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Vinculado con grupo</span>
+                                    <select name="vinculado_con_grupo" class="form-select form-select-sm" data-testid="select-vinculado-grupo">
+                                        <% catalogos.vinculadoGrupo.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.vinculado_con_grupo_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Estado civil</span>
+                                    <select name="estado_civil" class="form-select form-select-sm" data-testid="select-estado-civil">
+                                        <% catalogos.estadoCivil.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.estado_civil_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Dependientes económicos</span>
+                                    <select name="dependientes_economicos" class="form-select form-select-sm" data-testid="select-dependientes">
+                                        <% catalogos.dependientesEconomicos.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.dependientes_economicos_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Número de hijos</span>
+                                    <select name="numero_hijos" class="form-select form-select-sm" data-testid="select-numero-hijos">
+                                        <% catalogos.numeroHijos.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.numero_hijos_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Nivel de estudios</span>
+                                    <select name="nivel_estudios" class="form-select form-select-sm" data-testid="select-nivel-estudios">
+                                        <% catalogos.nivelEstudios.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.nivel_estudios_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Tipo de vivienda</span>
+                                    <select name="tipo_vivienda" class="form-select form-select-sm" data-testid="select-tipo-vivienda">
+                                        <% catalogos.tipoVivienda.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.tipo_vivienda_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Tipo de empleo</span>
+                                    <select name="tipo_empleo" class="form-select form-select-sm" data-testid="select-tipo-empleo">
+                                        <% catalogos.tipoEmpleo.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.tipo_empleo_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Ingresos mensuales</span>
+                                    <select name="ingresos_mensuales" class="form-select form-select-sm" data-testid="select-ingresos">
+                                        <% catalogos.ingresosMensuales.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.ingresos_mensuales_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Valor del patrimonio</span>
+                                    <select name="valor_patrimonio" class="form-select form-select-sm" data-testid="select-valor-patrimonio">
+                                        <% catalogos.valorPatrimonio.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.valor_patrimonio_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Pertenece a partido político</span>
+                                    <select name="pertenece_partido_politico" class="form-select form-select-sm" data-testid="select-partido">
+                                        <% catalogos.pertenecePartido.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.pertenece_partido_politico_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">PEPS</span>
+                                    <select name="peps" class="form-select form-select-sm" data-testid="select-peps">
+                                        <option value="">— Sin asignar —</option>
+                                        <% catalogos.peps.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.peps_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+
+                                <div class="dato-item">
+                                    <span class="dato-label">Rango de edad</span>
+                                    <select name="edad" class="form-select form-select-sm" data-testid="select-edad">
+                                        <option value="">— Sin asignar —</option>
+                                        <% catalogos.edad.forEach(op => { %>
+                                            <option value="<%= op.id_opcion %>" <%= cliente.edad_id == op.id_opcion ? 'selected' : '' %>><%= op.opciones %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
+
+                    <br>
 
                     <div class="exp-card mb-4">
                         <h2 class="exp-section-title">Documentos</h2>
