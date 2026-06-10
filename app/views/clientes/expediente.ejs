@@ -265,25 +265,40 @@
                                     <tbody>
                                         <tr>
                                             <td>Clasificación de Cliente</td>
-                                            <td>—</td>
-                                            <td>30%</td>
-                                            <td>—</td>
+                                            <td><%= cliente.clasif_cliente != null ? Number(cliente.clasif_cliente).toFixed(2) : '—' %></td>
+                                            <td><%= ponderacionCliente != null ? (ponderacionCliente * 100).toFixed(0) + '%' : '30%' %></td>
+                                            <td><%= (cliente.clasif_cliente != null && ponderacionCliente != null)
+                                                    ? (Number(cliente.clasif_cliente) * ponderacionCliente).toFixed(2)
+                                                    : '—' %></td>
                                         </tr>
                                         <tr>
                                             <td>Clasificación de Monitoreo</td>
-                                            <td>—</td>
-                                            <td>70%</td>
-                                            <td>—</td>
+                                            <td><%= cliente.clasif_monitoreo != null ? Number(cliente.clasif_monitoreo).toFixed(2) : '—' %></td>
+                                            <td><%= ponderacionMonitoreo != null ? (ponderacionMonitoreo * 100).toFixed(0) + '%' : '70%' %></td>
+                                            <td><%= (cliente.clasif_monitoreo != null && ponderacionMonitoreo != null)
+                                                    ? (Number(cliente.clasif_monitoreo) * ponderacionMonitoreo).toFixed(2)
+                                                    : '—' %></td>
                                         </tr>
                                     </tbody>
                                     <tfoot>
                                         <tr class="fila-total">
                                             <td colspan="3" class="text-end">Valor Total</td>
-                                            <td class="celda-total">—</td>
+                                            <td class="celda-total">
+                                                <%= cliente.puntaje != null ? Number(cliente.puntaje).toFixed(2) : '—' %>
+                                            </td>
                                         </tr>
                                         <tr class="fila-riesgo">
                                             <td colspan="3" class="text-end">RIESGO DETERMINADO</td>
-                                            <td class="celda-riesgo">—</td>
+                                            <td class="celda-riesgo
+                                                <%= cliente.riesgo_final === 1 ? 'riesgo-bajo'
+                                                : cliente.riesgo_final === 2 ? 'riesgo-medio'
+                                                : cliente.riesgo_final === 3 ? 'riesgo-alto'
+                                                : '' %>">
+                                                <%= cliente.riesgo_final === 1 ? 'BAJO'
+                                                : cliente.riesgo_final === 2 ? 'MEDIO'
+                                                : cliente.riesgo_final === 3 ? 'ALTO'
+                                                : '—' %>
+                                            </td>
                                         </tr>
                                     </tfoot>
                                 </table>

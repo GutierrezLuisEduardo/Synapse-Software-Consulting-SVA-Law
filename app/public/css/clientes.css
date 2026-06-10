@@ -211,3 +211,15 @@ body {
     background-color: var(--red) !important;
     color: var(--white) !important;
 }
+
+.celda-riesgo.riesgo-bajo  {
+    background-color: #d4edda; color: #155724;
+}
+
+.celda-riesgo.riesgo-medio {
+    background-color: #fff3cd; color: #856404;
+}
+
+.celda-riesgo.riesgo-alto  {
+    background-color: #f8d7da; color: #721c24;
+}

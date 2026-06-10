@@ -114,6 +114,25 @@ exports.getExpedienteCliente = async (req, res) => {
             frecuenciasPago: (await Contrato.fetchCatalogo(21)).rows
         };
 
+        // Calcular ponderaciones EBR para la vista de riesgo
+        const cliente = clienteDB.rows[0];
+        let ponderacionCliente = null;
+        let ponderacionMonitoreo = null;
+
+        if (cliente.enfoque_riesgos) {
+            const enfoque = typeof cliente.enfoque_riesgos === 'string'
+                ? JSON.parse(cliente.enfoque_riesgos)
+                : cliente.enfoque_riesgos;
+
+            // catalogo_ids 1-18 corresponden a campos de "Clasificación Cliente"
+            // catalogo_ids 19-31 a "Clasificación Monitoreo"
+            const idsCliente    = ['3','4','5','6','9','13','14','15','16','17','18','19','20','22','8','12','26','25'];
+            const idsMonitoreo  = ['1','2','7','10','11','21','23','24','27','28','29','30','31'];
+
+            ponderacionCliente   = idsCliente.reduce((s, k)  => s + (parseFloat(enfoque[k]) || 0), 0);
+            ponderacionMonitoreo = idsMonitoreo.reduce((s, k) => s + (parseFloat(enfoque[k]) || 0), 0);
+        }
+
         res.render('clientes/expediente', {
             usuario: req.session.usuario,
             activePage: 'clientes',
@@ -124,6 +143,8 @@ exports.getExpedienteCliente = async (req, res) => {
             alertas: alertasDB.rows,
             catalogos,
             catalogosContrato,
+            ponderacionCliente,
+            ponderacionMonitoreo,
         });
     } catch (error) {
         console.error(error);
