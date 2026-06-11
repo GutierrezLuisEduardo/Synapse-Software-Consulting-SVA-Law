@@ -55,6 +55,17 @@ Requisitos previos
 - node -v
 - npm -v
 
+Generación de un archivo .env con los siguientes campos
+
+- SESSION_SECRET (Secreto para encriptado, puede ser una frase)
+- DATABASE_URL (URL de base de datos en supabas)
+- SUPABASE_SERVICE_ROLE_KEY (Llave de rol de servicio)
+- SUPABASE_URL (URL de proyecto en supabase)
+- SUPABASE_BUCKET (Nombre de bucket en supabase para los documentos)
+- SUPABASE_EVIDENCES_BUCKET (Nombre de bucket en supabase para las evidencias)
+
+Los campos de SUPABASE y DATABASE deben ser seguidos de un = y el valor correspondiente a cada uno en supabase, mientras que el SESSION_SECRET puede ser cualquier frase.
+
 Instalar dependencias
 
 `npm install`
@@ -63,4 +74,4 @@ Esto instala: express, express-session, body-parser, ejs, pg, connect-pg-simple,
 
 Arrancar
 `npm start`
-Equivale a `node index.js`. El servidor queda disponible en http://localhost:3076 (redirige a /login).
+Equivale a `node index.js`. El servidor queda disponible en http://localhost:3000 (redirige a /login).
