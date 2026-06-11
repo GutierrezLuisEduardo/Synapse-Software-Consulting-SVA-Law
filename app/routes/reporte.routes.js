@@ -23,14 +23,14 @@ const upload = multer({
 router.get(
     '/reportes/crear',
     isAuth,
-    roleAuth(ROLES.OFICIAL, ROLES.ADMIN, ROLES.EMPLEADO),
+    roleAuth(ROLES.OFICIAL, ROLES.ADMIN, ROLES.EMPLEADO, ROLES.AUDITOR),
     reporteCtrl.getCrearROIP
 );
 
 router.post(
     '/reportes/crear',
     isAuth,
-    roleAuth(ROLES.OFICIAL, ROLES.ADMIN, ROLES.EMPLEADO),
+    roleAuth(ROLES.OFICIAL, ROLES.ADMIN, ROLES.EMPLEADO, ROLES.AUDITOR),
     noAuditor,
     upload.single('evidencia'),
     reporteCtrl.postCrearROIP

@@ -10,7 +10,7 @@ const todosLosRoles = roleAuth(ROLES.ADMIN, ROLES.OFICIAL, ROLES.EMPLEADO, ROLES
 
 router.get('/alertas', isAuth, todosLosRoles, alertaController.getAlertas);
 router.get('/alertas/exportar/txt',  isAuth, todosLosRoles, alertaController.getExportarAlertas);
-router.get('/alertas/descargar-reportes', isAuth, roleAuth(ROLES.OFICIAL, ROLES.ADMIN, ROLES.EMPLEADO), alertaController.getDescargarReportes);
+router.get('/alertas/descargar-reportes', isAuth, todosLosRoles, alertaController.getDescargarReportes);
 router.get('/alertas/:id', isAuth, todosLosRoles, alertaController.getDetalleAlerta);
 router.post('/alertas/:id/dictamen', isAuth, roleAuth(ROLES.OFICIAL, ROLES.ADMIN), alertaController.postDictamen);
 

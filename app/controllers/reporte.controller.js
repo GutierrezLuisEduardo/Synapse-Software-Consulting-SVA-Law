@@ -8,7 +8,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 const EVIDENCIAS_BUCKET = SUPABASE_EVIDENCES_BUCKET || 'evidencias';
 
-const ROLES_ROIP = [ROLES.OFICIAL, ROLES.ADMIN, ROLES.EMPLEADO];
+const ROLES_ROIP = [ROLES.OFICIAL, ROLES.ADMIN, ROLES.EMPLEADO, ROLES.AUDITOR];
 
 // GET reportes/crear, muestra formulario de creación de ROIP
 exports.getCrearROIP = async (req, res) => {
